@@ -26,7 +26,8 @@ HomePage.content_panels = AbstractRichTextPage.panels
 
 
 class StandardIndexPageRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey('wagtailbase.StandardIndexPage', related_name='related_links')
+    page = ParentalKey(
+        'wagtailbase.StandardIndexPage', related_name='related_links')
 
 
 class StandardIndexPage(Page, AbstractIndexPage):
@@ -38,7 +39,8 @@ StandardIndexPage.content_panels = AbstractIndexPage.panels + [
 
 
 class StandardPageRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey('wagtailbase.StandardPage', related_name='related_links')
+    page = ParentalKey(
+        'wagtailbase.StandardPage', related_name='related_links')
 
 
 class StandardPage(Page, AbstractRichTextPage):
@@ -50,7 +52,8 @@ StandardPage.content_panels = AbstractRichTextPage.panels + [
 
 
 class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey('wagtailbase.BlogIndexPage', related_name='related_links')
+    page = ParentalKey(
+        'wagtailbase.BlogIndexPage', related_name='related_links')
 
 
 class BlogIndexPage(Page, AbstractIndexPage):
@@ -95,7 +98,8 @@ class BlogPostRelatedLink(Orderable, AbstractRelatedLink):
 
 
 class BlogPostTag(TaggedItemBase):
-    content_object = ParentalKey('wagtailbase.BlogPost', related_name='tagged_items')
+    content_object = ParentalKey(
+        'wagtailbase.BlogPost', related_name='tagged_items')
 
 
 class BlogPost(Page, AbstractRichTextPage):
