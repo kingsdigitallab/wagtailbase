@@ -1,7 +1,7 @@
 from django.db import models
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, \
-        PageChooserPanel
+    PageChooserPanel
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 
@@ -59,8 +59,8 @@ class AbstractIndexPage(models.Model):
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
-        children = AbstractRichTextPage.objects.filter(live=True,
-                                               path__startswith=self.path)
+        children = AbstractRichTextPage.objects.filter(
+            live=True, path__startswith=self.path)
 
         return children
 
@@ -69,7 +69,7 @@ class AbstractIndexPage(models.Model):
 
 AbstractIndexPage.panels = [
     FieldPanel('title', classname='full title'),
-    FieldPanel('content', classname='full')
+    FieldPanel('introduction', classname='full')
 ]
 
 
