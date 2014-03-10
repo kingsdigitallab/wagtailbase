@@ -52,9 +52,9 @@ class AbstractIndexPage(models.Model):
 
     """Abstract class for index pages. Index pages are pages that will have
     children pages."""
-    content = RichTextField()
+    introduction = RichTextField(blank=True)
 
-    indexed_fields = ('content', )
+    indexed_fields = ('introduction', )
 
     @property
     def children(self):
