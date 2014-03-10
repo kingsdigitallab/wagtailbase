@@ -1,0 +1,6 @@
+{% extends "cms/rich_text_page.html" %}
+{% load rich_text %}
+
+{% block meta_title %}{{ self.title }}{% endblock %}
+{% block title %}{{ self.title }}{% endblock %}
+{% block main %}{{ self.content | richtext }}{% endblock %}
