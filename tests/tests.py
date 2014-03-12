@@ -1,34 +1,32 @@
 from django.test import TestCase
-from wagtailbase.models import StandardIndexPage, StandardPage, StandardPageRelatedLink
+from wagtailbase.models import (
+    StandardIndexPage,
+    StandardPage,
+    StandardPageRelatedLink)
+
+from wagtail.wagtailcore.models import Page
+
 
 class TestRelatedLink(TestCase):
-    fixtures = ['wagtailbase.json']
-
-    URL = 'http://www.duckduckgo.com/'
+    fixtures = ['wagtailbase.json', 'wagtailcore.json']
 
     def setUp(self):
         self.link = StandardPageRelatedLink.objects.get(id=1)
 
-
     def test_link(self):
-        expected = self.URL
-        self.assertEqual(expected, self.link.link)
+        self.assertEqual('http://www.duckduckgo.com/', self.link.link)
 
 
 class TestIndexPage(TestCase):
-    fixtures = ['wagtailbase.json']
+    fixtures = ['wagtailbase.json', 'wagtailcore.json']
 
-    # def setUp(self):
-    #     self.index_page = StandardIndexPage()
-    #     self.index_page.title = 'Standard Index Page'
-    #     self.index_page.save()
+    def setUp(self):
+        self.index_page = StandardIndexPage.objects.filter(slug='about').first()
+        self.child_page = Page.objects.filter(slug="project-team-and-partners").first()
 
-    #     self.child_page = StandardPage()
-    #     self.child_page.title = 'Standard Page'
-    #     self.child_page.content = 'Standard page content'
-    #     self.child_page.save()
+    def test_children(self):
+        self.assertEqual(1, len(self.index_page.children))
 
-    #     self.index_page.add_child(self.child_page)
+        self.assertEqual(self.child_page, self.index_page.children.first())
 
-    # def test_children(self):
-    #     self.assertEqual(1, len(self.index_page.children))
+        #self.assertIsNone(self.child_page.children)
