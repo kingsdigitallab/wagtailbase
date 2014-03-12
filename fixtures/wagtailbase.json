@@ -1,0 +1,19 @@
+[
+{
+    "pk": 1,
+    "model": "wagtailbase.StandardIndexPage",
+    "fields": {
+        "title": "The Index",
+        "introduction": "This is an intro"
+    }
+},
+{
+    "pk": 1,
+    "model": "wagtailbase.StandardPageRelatedLink",
+    "fields": {
+        "title": "The Duck",
+        "link_external": "http://www.duckduckgo.com/",
+        "page": 1
+    }
+}
+]
