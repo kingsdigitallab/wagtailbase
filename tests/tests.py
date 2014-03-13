@@ -21,8 +21,8 @@ class TestIndexPage(TestCase):
     fixtures = ['wagtailbase.json', 'wagtailcore.json']
 
     def setUp(self):
-        self.index_page = StandardIndexPage.objects.filter(slug='about').first()
-        self.child_page = Page.objects.filter(slug="project-team-and-partners").first()
+        self.index_page = StandardIndexPage.objects.filter(slug='standard-index').first()
+        self.child_page = StandardPage.objects.filter(slug="first-page-index").first()
 
     def test_children(self):
         self.assertEqual(1, len(self.index_page.children))
