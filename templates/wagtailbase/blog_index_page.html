@@ -3,6 +3,7 @@
 {% block main %}
     {% include "wagtailbase/includes/introduction.html" with introduction=self.introduction only %}
 
-    <h2>In this section</h2>
-    {% include "wagtailbase/includes/standard_index_page_children.html" with children=self.children %}
+    {% if request.GET.tag|length %}
+        <h2>Showing posts tagged as {{ request.GET.tag|safe }} <a href=" {% pageurl self %} ">Show all</a></h2>
+    {% endif %}
 {% endblock %}
