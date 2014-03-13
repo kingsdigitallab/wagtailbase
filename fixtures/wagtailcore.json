@@ -3,7 +3,7 @@
   "pk": 1, 
   "model": "wagtailcore.site", 
   "fields": {
-    "root_page": 3, 
+    "root_page": 2, 
     "hostname": "localhost", 
     "port": 80, 
     "is_default_site": true
@@ -20,7 +20,7 @@
     "seo_title": "", 
     "depth": 1, 
     "search_description": "", 
-    "content_type": 21, 
+    "content_type": 11, 
     "has_unpublished_changes": false, 
     "owner": null, 
     "path": "0001", 
@@ -29,69 +29,69 @@
   }
 },
 {
-  "pk": 3, 
+  "pk": 2, 
   "model": "wagtailcore.page", 
   "fields": {
-    "title": "Home", 
+    "title": "Welcome to your new Wagtail site!", 
     "numchild": 1, 
     "show_in_menus": false, 
     "live": true, 
     "seo_title": "", 
     "depth": 2, 
     "search_description": "", 
-    "content_type": 8, 
+    "content_type": 11, 
     "has_unpublished_changes": false, 
-    "owner": 1, 
-    "path": "00010002", 
-    "url_path": "/hp/", 
-    "slug": "hp"
+    "owner": null, 
+    "path": "00010001", 
+    "url_path": "/home/", 
+    "slug": "home"
   }
 },
 {
-  "pk": 4, 
+  "pk": 3, 
   "model": "wagtailcore.page", 
   "fields": {
-    "title": "About", 
+    "title": "Standard Index", 
     "numchild": 1, 
     "show_in_menus": false, 
     "live": true, 
     "seo_title": "", 
     "depth": 3, 
     "search_description": "", 
-    "content_type": 10, 
+    "content_type": 26, 
     "has_unpublished_changes": false, 
     "owner": 1, 
-    "path": "000100020001", 
-    "url_path": "/hp/about/", 
-    "slug": "about"
+    "path": "000100010001", 
+    "url_path": "/home/standard-index/", 
+    "slug": "standard-index"
   }
 },
 {
-  "pk": 5, 
+  "pk": 4, 
   "model": "wagtailcore.page", 
   "fields": {
-    "title": "Project team and partners", 
+    "title": "First page in index", 
     "numchild": 0, 
     "show_in_menus": false, 
     "live": true, 
     "seo_title": "", 
     "depth": 4, 
     "search_description": "", 
-    "content_type": 12, 
+    "content_type": 28, 
     "has_unpublished_changes": false, 
     "owner": 1, 
-    "path": "0001000200010001", 
-    "url_path": "/hp/about/project-team-and-partners/", 
-    "slug": "project-team-and-partners"
+    "path": "0001000100010001", 
+    "url_path": "/home/standard-index/first-page-index/", 
+    "slug": "first-page-index"
   }
 },
 {
   "pk": 1, 
   "model": "wagtailcore.pagerevision", 
   "fields": {
-    "created_at": "2014-03-12T14:45:41.358Z", 
+    "created_at": "2014-03-13T17:33:00.822Z", 
     "submitted_for_moderation": false, 
-    "content_json": "{\"title\": \"Home\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<h2>The Redress of the Past: Historical Pageants in Britain, 1905-2016</h2>\\n<p>The <a href=\\\"http://www.ahrc.ac.uk/\\\">Arts and Humanities Research Council</a> is funding a major project examining historical pageants in twentieth-century Britain.</p>\\n<p>Twentieth-century Britain was subject to regular bouts of 'pageant fever'. Communities across \\r\\nEngland, Scotland and Wales staged theatrical re-enactments of events from local and \\r\\nnational history with thousands of men, women and children involved as performers, \\r\\norganizers and spectators. This was national costume drama on a grand scale. Over the \\r\\ncourse of the twentieth century many hundreds of events were mounted by communities and \\r\\ninstitutions, ranging from small churches and village communities to large cities such as \\r\\nLiverpool and Manchester.</p>\\n<p>\\n<a href=\\\"http://www.historicalpageants.ac.uk/about/\\\">Read more about the project </a>\\n</p>\\n<p>\\n</p><p class=\\\"inner\\\">\\n<h3>We need your help!</h3>\\n<p>Do you have any materials relating to historical pageants?</p>\\n<p>Interested in helping shape the direction of the Historical Pageants website?</p>\\n<p>\\n<a class=\\\"button round home-page-cta\\\" href=\\\"http://www.historicalpageants.ac.uk/get-involved/\\\">GET INVOLVED</a>\\n</p>\\n</p>\\n\", \"search_description\": \"\", \"depth\": 2, \"has_unpublished_changes\": false, \"content_type\": 8, \"path\": \"00010002\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/hp/\", \"slug\": \"hp\"}", 
+    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"link to something else\", \"link_external\": \"http://www.duckduckgo.com/\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 3}], \"title\": \"Standard Index\", \"introduction\": \"<p>content of standard index</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 26, \"path\": \"000100010001\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/home/standard-index/\", \"slug\": \"standard-index\"}", 
     "page": 3, 
     "user": 1
   }
@@ -100,21 +100,10 @@
   "pk": 2, 
   "model": "wagtailcore.pagerevision", 
   "fields": {
-    "created_at": "2014-03-12T14:46:51.804Z", 
+    "created_at": "2014-03-13T17:33:47.125Z", 
     "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"About\", \"introduction\": \"<p>The Arts and Humanities Research Council is funding a major project examining historical pageants in twentieth-century Britain.</p>\\n<p>Twentieth-century Britain was subject to regular bouts of 'pageant \\r\\nfever'. Communities across England, Scotland and Wales staged theatrical\\r\\n re-enactments of historical events with thousands of men, women and \\r\\nchildren involved as performers, organizers and spectators. Over the \\r\\ncourse of the twentieth century many such events were put on, ranging \\r\\nfrom small churches and village communities to large cities such as \\r\\nLiverpool and Manchester.</p>\\n<p>Drawing on oral and written evidence, our project offers key insights\\r\\n into the role of heritage in leisure activities, the interaction \\r\\nbetween local, national and imperial identities, and the character of \\r\\ncommunity life. Our project will reveal the stories that communities and\\r\\n institutions told about themselves. It will result in a comprehensive \\r\\ndatabase of historical pageants, a major book, articles, and an edited \\r\\nvolume of essays situating the British movement in its international \\r\\ncontext.</p>\\n<p>A key feature of the project will be a publicly-accessible website. \\r\\nThis will include general commentary on the pageant movement, \\r\\nrepresentative images of pageant-related ephemera, and oral testimonies \\r\\nfrom witnesses to historical pageants. It will enable individual users \\r\\nand local history societies to contribute their own memories and \\r\\nmemorabilia.</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 10, \"path\": \"000100020001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/hp/about/\", \"slug\": \"about\"}", 
+    "content_json": "{\"related_links\": [], \"title\": \"First page in index\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>more content</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 28, \"path\": \"0001000100010001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/home/standard-index/first-page-index/\", \"slug\": \"first-page-index\"}", 
     "page": 4, 
-    "user": 1
-  }
-},
-{
-  "pk": 3, 
-  "model": "wagtailcore.pagerevision", 
-  "fields": {
-    "created_at": "2014-03-12T16:12:48.517Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"Project team and partners\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p class=\\\"large-7 columns main-content\\\">\\n<h2>\\r\\nProject team and partners\\r\\n</h2>\\n<h2>Project team</h2>\\n<p>Angela Bartie (University of Strathclyde)</p>\\n<p>Linda Fleming (University of Glasgow)</p>\\n<p>Mark Freeman (Institute of Education)</p>\\n<p>Tom Hulme (King\\u2019s College London)</p>\\n<p><a href=\\\"http://www.kcl.ac.uk/artshums/depts/ddh/people/research/little/index.aspx\\\">David Little</a> (King's College London)</p>\\n<p><a href=\\\"http://www.kcl.ac.uk/artshums/depts/history/people/staff/academic/readman/index.aspx\\\" title=\\\"Readman, Dr Paul\\\">Paul Readman</a>\\u00a0(King\\u2019s College London)</p>\\n<p><a href=\\\"http://www.kcl.ac.uk/artshums/depts/ddh/people/research/tupman/index.aspx\\\">Charlotte Tupman</a> (King\\u2019s College London)</p>\\n<p><a href=\\\"http://www.kcl.ac.uk/artshums/depts/ddh/people/academic/vetch/index.aspx\\\" title=\\\"Vetch, Paul\\\">Paul Vetch</a>\\u00a0(King\\u2019s College London)</p>\\n<p><a href=\\\"http://www.kcl.ac.uk/artshums/depts/ddh/people/research/vieira/index.aspx\\\">Miguel Vieira</a> (King\\u2019s College London)</p>\\n<h2>Project partners</h2>\\n<p><a href=\\\"http://www.stalbansmuseums.org.uk/\\\">St Albans Museums</a></p>\\n<p><a href=\\\"http://www.suffolkheritagedirect.org.uk/partners/st-edmundsbury-heritage/\\\">St Edmundsbury Heritage Service</a></p>\\n<p><a href=\\\"http://www.tulliehouse.co.uk/\\\">Tullie House Museum and Art Gallery</a></p>\\n<p><a href=\\\"http://www.recordinguttlesfordhistory.org.uk/\\\">Recorders of Uttlesford History</a></p>\\n</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 12, \"path\": \"0001000200010001\", \"owner\": 1, \"pk\": 5, \"url_path\": \"/hp/about/project-team-and-partners/\", \"slug\": \"project-team-and-partners\"}", 
-    "page": 5, 
     "user": 1
   }
 },

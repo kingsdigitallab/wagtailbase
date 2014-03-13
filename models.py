@@ -1,4 +1,4 @@
-from base import AbstractIndexPage, AbstractRelatedLink, AbstractRichTextPage
+from base import AbstractRelatedLink, AbstractPage
 
 from datetime import date
 
@@ -14,49 +14,77 @@ from modelcluster.tags import ClusterTaggableManager
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
 from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailcore.fields import RichTextField
 
 
-class HomePage(Page, AbstractRichTextPage):
+class IndexPage(AbstractPage):
+
+    """Base class for index pages. Index pages are pages that will have
+    children pages."""
+    search_name = 'Index Page'
+    introduction = RichTextField(blank=True)
+
+    indexed_fields = ('introduction', )
+
+    @property
+    def children(self):
+        """Returns a list of the pages that are children of this page."""
+        children = AbstractPage.objects.filter(
+            live=True,
+            path__startswith=self.path).select_subclasses()
+
+        return children
+
+
+class PageRelatedLink(Orderable, AbstractRelatedLink):
+    page = ParentalKey(
+        'wagtailbase.IndexPage', related_name='related_links')
+
+IndexPage.content_panels = [
+    FieldPanel('title', classname='full title'),
+    FieldPanel('introduction', classname='full'),
+    InlinePanel(IndexPage, 'related_links', label='Related links')
+]
+
+
+class RichTextPage(AbstractPage):
+
+    """Base class for rich text pages."""
+    search_name = 'Rich Text Page'
+    content = RichTextField()
+
+    indexed_fields = ('content', )
+
+    @property
+    def index_page(self):
+        """Finds and returns the index page from the page ancestors."""
+        for ancestor in reversed(self.get_ancestors()):
+            if isinstance(ancestor.specific, IndexPage):
+                return ancestor
+
+        # No ancestors are index pages, returns the first page
+        return Page.objects.first()
+
+
+class StandardRichTextLink(Orderable, AbstractRelatedLink):
+    page = ParentalKey(
+        'wagtailbase.RichTextPage', related_name='related_links')
+
+RichTextPage.content_panels = [
+    FieldPanel('title', classname='full title'),
+    FieldPanel('content', classname='full'),
+    InlinePanel(RichTextPage, 'related_links', label='Related links')
+]
+
+
+class HomePage(RichTextPage):
     search_name = 'Home Page'
 
     class Meta:
         verbose_name = 'Homepage'
 
-HomePage.content_panels = AbstractRichTextPage.panels
 
-
-class StandardIndexPageRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey(
-        'wagtailbase.StandardIndexPage', related_name='related_links')
-
-
-class StandardIndexPage(Page, AbstractIndexPage):
-    search_name = 'Standard Index Page'
-
-StandardIndexPage.content_panels = AbstractIndexPage.panels + [
-    InlinePanel(StandardIndexPage, 'related_links', label='Related links')
-]
-
-
-class StandardPageRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey(
-        'wagtailbase.StandardPage', related_name='related_links')
-
-
-class StandardPage(Page, AbstractRichTextPage):
-    search_name = 'Standard page'
-
-StandardPage.content_panels = AbstractRichTextPage.panels + [
-    InlinePanel(StandardPage, 'related_links', label='Related links')
-]
-
-
-class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey(
-        'wagtailbase.BlogIndexPage', related_name='related_links')
-
-
-class BlogIndexPage(Page, AbstractIndexPage):
+class BlogIndexPage(IndexPage):
     search_name = 'Blog'
 
     @property
@@ -88,21 +116,13 @@ class BlogIndexPage(Page, AbstractIndexPage):
 
         return render(request, self.template, {'self': self, 'posts': posts})
 
-BlogIndexPage.content_panels = AbstractIndexPage.panels + [
-    InlinePanel(BlogIndexPage, 'related_links', label='Related links')
-]
-
-
-class BlogPostRelatedLink(Orderable, AbstractRelatedLink):
-    page = ParentalKey('wagtailbase.BlogPost', related_name='related_links')
-
 
 class BlogPostTag(TaggedItemBase):
     content_object = ParentalKey(
         'wagtailbase.BlogPost', related_name='tagged_items')
 
 
-class BlogPost(Page, AbstractRichTextPage):
+class BlogPost(RichTextPage):
     date = models.DateField('Post Date', default=date.today)
     tags = ClusterTaggableManager(through=BlogPostTag, blank=True)
 

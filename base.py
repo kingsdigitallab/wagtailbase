@@ -2,10 +2,11 @@ from django.db import models
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, \
     PageChooserPanel
-from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailcore.models import Page
 
+
+from model_utils.managers import InheritanceManager
 
 class AbstractLinkField(models.Model):
 
@@ -48,52 +49,9 @@ class AbstractRelatedLink(AbstractLinkField):
     class Meta:
         abstract = True
 
-
-class AbstractIndexPage(models.Model):
-
-    """Abstract class for index pages. Index pages are pages that will have
-    children pages."""
-    introduction = RichTextField(blank=True)
-
-    indexed_fields = ('introduction', )
-
-    @property
-    def children(self):
-        """Returns a list of the pages that are children of this page."""
-        children = self.get_children().filter(live=True)
-
-        return children
+class AbstractPage(Page):
+    """Abstract class Page which uses InheritanceManager."""
+    objects = InheritanceManager()
 
     class Meta:
         abstract = True
-
-AbstractIndexPage.panels = [
-    FieldPanel('title', classname='full title'),
-    FieldPanel('introduction', classname='full')
-]
-
-
-class AbstractRichTextPage(models.Model):
-
-    """Abstract class for rich text pages."""
-    content = RichTextField()
-
-    indexed_fields = ('content', )
-
-    @property
-    def index_page(self):
-        """Finds and returns the index page from the page ancestors."""
-        for ancestor in reversed(self.get_ancestors()):
-            if isinstance(ancestor.specific, AbstractIndexPage):
-                return ancestor
-
-        # No ancestors are index pages, returns the first page
-        return Page.objects.first()
-
-    class Meta:
-        abstract = True
-
-AbstractRichTextPage.panels = [
-    FieldPanel('title', classname='full title'),
-    FieldPanel('content', classname='full')
-]
