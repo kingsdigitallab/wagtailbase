@@ -10,11 +10,47 @@
   "fields": {}
 },
 {
+  "pk": 5, 
+  "model": "wagtailbase.basepage", 
+  "fields": {}
+},
+{
+  "pk": 6, 
+  "model": "wagtailbase.basepage", 
+  "fields": {}
+},
+{
+  "pk": 3, 
+  "model": "wagtailbase.baseindexpage", 
+  "fields": {
+    "introduction": "<p>Standard Index here we go!</p>"
+  }
+},
+{
+  "pk": 5, 
+  "model": "wagtailbase.baseindexpage", 
+  "fields": {
+    "introduction": "<p>This blog contains no personal feelings</p>"
+  }
+},
+{
+  "pk": 4, 
+  "model": "wagtailbase.baserichtextpage", 
+  "fields": {
+    "content": "<p>This page has been created so many times...</p>"
+  }
+},
+{
+  "pk": 6, 
+  "model": "wagtailbase.baserichtextpage", 
+  "fields": {
+    "content": "<p>Here be Dragons</p>"
+  }
+},
+{
   "pk": 3, 
   "model": "wagtailbase.indexpage", 
-  "fields": {
-    "introduction": "<p>standard index content</p>"
-  }
+  "fields": {}
 },
 {
   "pk": 1, 
@@ -31,8 +67,18 @@
 {
   "pk": 4, 
   "model": "wagtailbase.richtextpage", 
+  "fields": {}
+},
+{
+  "pk": 5, 
+  "model": "wagtailbase.blogindexpage", 
+  "fields": {}
+},
+{
+  "pk": 6, 
+  "model": "wagtailbase.blogpost", 
   "fields": {
-    "content": "<p>content of first page</p>"
+    "date": "2014-03-14"
   }
 }
 ]

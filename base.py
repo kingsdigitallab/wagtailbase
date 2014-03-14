@@ -4,6 +4,7 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, \
     PageChooserPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.fields import RichTextField
 
 
 from model_utils.managers import InheritanceManager
@@ -61,3 +62,43 @@ class BasePage(Page):
 
     objects = InheritanceManager()
     is_abstract = True
+
+
+class BaseIndexPage(BasePage):
+
+    """Abstract class for index pages. Index pages are pages that will have
+    children pages."""
+    introduction = RichTextField(blank=True)
+
+    indexed_fields = ('introduction', )
+    is_abstract = True
+
+    @property
+    def children(self):
+        """Returns a list of the pages that are children of this page."""
+        children = BasePage.objects.filter(
+            live=True,
+            path__startswith=self.path).exclude(id=self.id).select_subclasses()
+
+        return children
+
+
+
+class BaseRichTextPage(BasePage):
+
+    """Abstract class for rich text pages."""
+    content = RichTextField()
+
+    indexed_fields = ('content', )
+    is_abstract = True
+
+    @property
+    def index_page(self):
+        """Finds and returns the index page from the page ancestors."""
+        for ancestor in reversed(self.get_ancestors()):
+            if isinstance(ancestor.specific, BaseIndexPage):
+                return ancestor
+
+        # No ancestors are index pages, returns the first page
+        return Page.objects.first()
+
