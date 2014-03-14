@@ -29,7 +29,7 @@ class TestIndexPage(TestCase):
             slug="first-page-index").first()
 
     def test_children(self):
-        self.assertEqual(1, len(self.index_page.children))
+        self.assertEqual(2, len(self.index_page.children))
 
         self.assertEqual(self.child_page,
                          self.index_page.get_children().first().specific)
