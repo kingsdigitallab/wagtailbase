@@ -41,7 +41,6 @@ class RichTextPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
         'wagtailbase.RichTextPage', related_name='related_links')
 
-
 RichTextPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('content', classname='full'),
@@ -54,6 +53,11 @@ class HomePage(BaseRichTextPage):
 
     class Meta:
         verbose_name = 'Homepage'
+
+HomePage.content_panels = [
+    FieldPanel('title', classname='full title'),
+    FieldPanel('content', classname='full')
+]
 
 
 class BlogIndexPage(BaseIndexPage):
