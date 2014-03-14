@@ -1,4 +1,4 @@
-from base import AbstractRelatedLink, BasePage
+from base import AbstractRelatedLink, BaseIndexPage, BaseRichTextPage
 
 from datetime import date
 
@@ -13,28 +13,12 @@ from modelcluster.fields import ParentalKey
 from modelcluster.tags import ClusterTaggableManager
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
-from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailcore.models import Orderable
 
 
-
-class IndexPage(BasePage):
-
-    """Base class for index pages. Index pages are pages that will have
-    children pages."""
+class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
-    introduction = RichTextField(blank=True)
 
-    indexed_fields = ('introduction', )
-
-    @property
-    def children(self):
-        """Returns a list of the pages that are children of this page."""
-        children = BasePage.objects.filter(
-            live=True,
-            path__startswith=self.path).exclude(id=self.id).select_subclasses()
-
-        return children
 
 class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
@@ -47,28 +31,13 @@ IndexPage.content_panels = [
 ]
 
 
-class RichTextPage(BasePage):
-
-    """Base class for rich text pages."""
+class RichTextPage(BaseRichTextPage):
     search_name = 'Rich Text Page'
-    content = RichTextField()
 
-    indexed_fields = ('content', )
-
-    @property
-    def index_page(self):
-        """Finds and returns the index page from the page ancestors."""
-        for ancestor in reversed(self.get_ancestors()):
-            if isinstance(ancestor.specific, IndexPage):
-                return ancestor
-
-        # No ancestors are index pages, returns the first page
-        return Page.objects.first()
 
 class RichTextPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
         'wagtailbase.RichTextPage', related_name='related_links')
-
 
 RichTextPage.content_panels = [
     FieldPanel('title', classname='full title'),
@@ -77,14 +46,19 @@ RichTextPage.content_panels = [
 ]
 
 
-class HomePage(RichTextPage):
+class HomePage(BaseRichTextPage):
     search_name = 'Home Page'
 
     class Meta:
         verbose_name = 'Homepage'
 
+HomePage.content_panels = [
+    FieldPanel('title', classname='full title'),
+    FieldPanel('content', classname='full')
+]
 
-class BlogIndexPage(IndexPage):
+
+class BlogIndexPage(BaseIndexPage):
     search_name = 'Blog'
 
     @property
@@ -117,16 +91,32 @@ class BlogIndexPage(IndexPage):
         return render(request, self.template, {'self': self, 'posts': posts})
 
 
+class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):
+    page = ParentalKey(
+        'wagtailbase.BlogIndexPage', related_name='related_links')
+
+BlogIndexPage.content_panels = [
+    FieldPanel('title', classname='full title'),
+    FieldPanel('introduction', classname='full'),
+    InlinePanel(BlogIndexPage, 'related_links', label='Related links')
+]
+
+
 class BlogPostTag(TaggedItemBase):
     content_object = ParentalKey(
         'wagtailbase.BlogPost', related_name='tagged_items')
 
 
-class BlogPost(RichTextPage):
+class BlogPost(BaseRichTextPage):
     date = models.DateField('Post Date', default=date.today)
     tags = ClusterTaggableManager(through=BlogPostTag, blank=True)
 
     search_name = 'Blog post'
+
+
+class BlogPostRelatedLink(Orderable, AbstractRelatedLink):
+    page = ParentalKey(
+        'wagtailbase.BlogPost', related_name='related_links')
 
 BlogPost.content_panels = [
     FieldPanel('title', classname='full title'),

@@ -4,13 +4,12 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, \
     PageChooserPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailcore.models import Page
-
+from wagtail.wagtailcore.fields import RichTextField
 
 from model_utils.managers import InheritanceManager
 
 
 class AbstractLinkField(models.Model):
-
     """Abstract class for link fields."""
     link_document = models.ForeignKey('wagtaildocs.Document', blank=True,
                                       null=True, related_name='+')
@@ -38,7 +37,6 @@ class AbstractLinkField(models.Model):
 
 
 class AbstractRelatedLink(AbstractLinkField):
-
     """Abstract class for related links."""
     title = models.CharField(max_length=256, help_text='Link title')
 
@@ -52,12 +50,45 @@ class AbstractRelatedLink(AbstractLinkField):
 
 
 class BasePage(Page):
-
-    """
-    Abstract class Page which uses InheritanceManager. This class
-    is not abstract to Django because it needs access to the
-    manager. It will not appear in the Wagtail admin, however.
-    """
-
-    objects = InheritanceManager()
+    """Abstract class Page which uses InheritanceManager. This class is not
+    abstract to Django because it needs access to the manager. It will not
+    appear in the Wagtail admin, however."""
     is_abstract = True
+    objects = InheritanceManager()
+
+
+class BaseIndexPage(BasePage):
+    """Base class for index pages. Index pages are pages that will have
+    children pages."""
+    introduction = RichTextField(blank=True)
+
+    indexed_fields = ('introduction', )
+    is_abstract = True
+
+    @property
+    def children(self):
+        """Returns a list of the pages that are children of this page."""
+        children = BasePage.objects.filter(
+            live=True,
+            path__startswith=self.path).exclude(id=self.id).select_subclasses()
+
+        return children
+
+
+class BaseRichTextPage(BasePage):
+    """Base class for rich text pages."""
+    content = RichTextField()
+
+    indexed_fields = ('content', )
+    is_abstract = True
+
+    @property
+    def index_page(self):
+        """Finds and returns the index page from the page ancestors. If no
+        index page is found in the ancestors, it returns the first page."""
+        for ancestor in reversed(self.get_ancestors()):
+            if isinstance(ancestor.specific, BaseIndexPage):
+                return ancestor
+
+        # No ancestors are index pages, returns the first page
+        return Page.objects.first()
