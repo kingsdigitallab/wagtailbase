@@ -72,11 +72,9 @@ class BaseIndexPage(BasePage):
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
-        children = BasePage.objects.filter(
+        return BasePage.objects.filter(
             live=True,
             path__startswith=self.path).exclude(id=self.id).select_subclasses()
-
-        return children
 
 
 class BaseRichTextPage(BasePage):

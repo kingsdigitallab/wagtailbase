@@ -65,10 +65,10 @@ class BlogIndexPage(BaseIndexPage):
 
     @property
     def posts(self):
-        """Returns a list of the blog pages that are children of this page."""
-        posts = self.children.order_by('-date')
-
-        return posts
+        """Returns a list of the blog posts that are children of this page."""
+        return BlogPost.objects.filter(
+            live=True,
+            path__startswith=self.path).order_by('-date')
 
     def serve(self, request):
         """Renders the blog posts."""
