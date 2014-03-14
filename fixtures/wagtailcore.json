@@ -20,7 +20,10 @@
     "seo_title": "", 
     "depth": 1, 
     "search_description": "", 
-    "content_type": 11, 
+    "content_type": [
+      "wagtailcore", 
+      "page"
+    ], 
     "has_unpublished_changes": false, 
     "owner": null, 
     "path": "0001", 
@@ -39,7 +42,10 @@
     "seo_title": "", 
     "depth": 2, 
     "search_description": "", 
-    "content_type": 11, 
+    "content_type": [
+      "wagtailcore", 
+      "page"
+    ], 
     "has_unpublished_changes": false, 
     "owner": null, 
     "path": "00010001", 
@@ -58,9 +64,14 @@
     "seo_title": "", 
     "depth": 3, 
     "search_description": "", 
-    "content_type": 29, 
+    "content_type": [
+      "wagtailbase", 
+      "indexpage"
+    ], 
     "has_unpublished_changes": false, 
-    "owner": 1, 
+    "owner": [
+      "alejandro"
+    ], 
     "path": "000100010001", 
     "url_path": "/home/standard-index/", 
     "slug": "standard-index"
@@ -77,9 +88,14 @@
     "seo_title": "", 
     "depth": 4, 
     "search_description": "", 
-    "content_type": 31, 
+    "content_type": [
+      "wagtailbase", 
+      "richtextpage"
+    ], 
     "has_unpublished_changes": false, 
-    "owner": 1, 
+    "owner": [
+      "alejandro"
+    ], 
     "path": "0001000100010001", 
     "url_path": "/home/standard-index/first-page-index/", 
     "slug": "first-page-index"
@@ -96,9 +112,14 @@
     "seo_title": "", 
     "depth": 3, 
     "search_description": "", 
-    "content_type": 34, 
+    "content_type": [
+      "wagtailbase", 
+      "blogindexpage"
+    ], 
     "has_unpublished_changes": false, 
-    "owner": 1, 
+    "owner": [
+      "alejandro"
+    ], 
     "path": "000100010002", 
     "url_path": "/home/blog/", 
     "slug": "blog"
@@ -115,9 +136,14 @@
     "seo_title": "", 
     "depth": 4, 
     "search_description": "", 
-    "content_type": 37, 
+    "content_type": [
+      "wagtailbase", 
+      "blogpost"
+    ], 
     "has_unpublished_changes": false, 
-    "owner": 1, 
+    "owner": [
+      "alejandro"
+    ], 
     "path": "0001000100020001", 
     "url_path": "/home/blog/s-it/", 
     "slug": "s-it"
@@ -134,9 +160,14 @@
     "seo_title": "", 
     "depth": 4, 
     "search_description": "", 
-    "content_type": 37, 
+    "content_type": [
+      "wagtailbase", 
+      "blogpost"
+    ], 
     "has_unpublished_changes": false, 
-    "owner": 1, 
+    "owner": [
+      "alejandro"
+    ], 
     "path": "0001000100020002", 
     "url_path": "/home/blog/another-blog-post/", 
     "slug": "another-blog-post"
@@ -153,9 +184,14 @@
     "seo_title": "", 
     "depth": 4, 
     "search_description": "", 
-    "content_type": 29, 
+    "content_type": [
+      "wagtailbase", 
+      "indexpage"
+    ], 
     "has_unpublished_changes": false, 
-    "owner": 1, 
+    "owner": [
+      "alejandro"
+    ], 
     "path": "0001000100010002", 
     "url_path": "/home/standard-index/nested-index/", 
     "slug": "nested-index"
@@ -169,7 +205,9 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"link to something else\", \"link_external\": \"http://www.duckduckgo.com/\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 3}], \"title\": \"Standard Index\", \"introduction\": \"<p>Standard Index here we go!</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"000100010001\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/home/standard-index/\", \"slug\": \"standard-index\"}", 
     "page": 3, 
-    "user": 1
+    "user": [
+      "alejandro"
+    ]
   }
 },
 {
@@ -180,7 +218,9 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [], \"title\": \"First page in index\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>This page has been created so many times...</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 31, \"path\": \"0001000100010001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/home/standard-index/first-page-index/\", \"slug\": \"first-page-index\"}", 
     "page": 4, 
-    "user": 1
+    "user": [
+      "alejandro"
+    ]
   }
 },
 {
@@ -191,7 +231,9 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [], \"title\": \"Blog\", \"introduction\": \"<p>This blog contains no personal feelings</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 34, \"path\": \"000100010002\", \"owner\": 1, \"pk\": 5, \"url_path\": \"/home/blog/\", \"slug\": \"blog\"}", 
     "page": 5, 
-    "user": 1
+    "user": [
+      "alejandro"
+    ]
   }
 },
 {
@@ -202,7 +244,9 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [], \"date\": \"2014-03-14\", \"title\": \"That's It!\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>Here be Dragons</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020001\", \"owner\": 1, \"pk\": 6, \"url_path\": \"/home/blog/s-it/\", \"slug\": \"s-it\"}", 
     "page": 6, 
-    "user": 1
+    "user": [
+      "alejandro"
+    ]
   }
 },
 {
@@ -213,7 +257,9 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"wagtail\", \"link_external\": \"https://github.com/torchbox/wagtail\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 7}], \"date\": \"2014-03-14\", \"title\": \"Another blog post\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>this blog post contains an in-detail review of wagtail and how it cannot handle inheritance very well</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020002\", \"owner\": 1, \"pk\": 7, \"url_path\": \"/home/blog/another-blog-post/\", \"slug\": \"another-blog-post\"}", 
     "page": 7, 
-    "user": 1
+    "user": [
+      "alejandro"
+    ]
   }
 },
 {
@@ -224,14 +270,18 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [], \"title\": \"Nested Index\", \"introduction\": \"<p>This index is nested</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"0001000100010002\", \"owner\": 1, \"pk\": 8, \"url_path\": \"/home/standard-index/nested-index/\", \"slug\": \"nested-index\"}", 
     "page": 8, 
-    "user": 1
+    "user": [
+      "alejandro"
+    ]
   }
 },
 {
   "pk": 1, 
   "model": "wagtailcore.grouppagepermission", 
   "fields": {
-    "group": 2, 
+    "group": [
+      "Moderators"
+    ], 
     "page": 1, 
     "permission_type": "add"
   }
@@ -240,7 +290,9 @@
   "pk": 2, 
   "model": "wagtailcore.grouppagepermission", 
   "fields": {
-    "group": 2, 
+    "group": [
+      "Moderators"
+    ], 
     "page": 1, 
     "permission_type": "edit"
   }
@@ -249,7 +301,9 @@
   "pk": 3, 
   "model": "wagtailcore.grouppagepermission", 
   "fields": {
-    "group": 2, 
+    "group": [
+      "Moderators"
+    ], 
     "page": 1, 
     "permission_type": "publish"
   }
@@ -258,7 +312,9 @@
   "pk": 4, 
   "model": "wagtailcore.grouppagepermission", 
   "fields": {
-    "group": 1, 
+    "group": [
+      "Editors"
+    ], 
     "page": 1, 
     "permission_type": "add"
   }
@@ -267,7 +323,9 @@
   "pk": 5, 
   "model": "wagtailcore.grouppagepermission", 
   "fields": {
-    "group": 1, 
+    "group": [
+      "Editors"
+    ], 
     "page": 1, 
     "permission_type": "edit"
   }

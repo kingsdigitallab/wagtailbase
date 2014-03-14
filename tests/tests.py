@@ -9,8 +9,11 @@ from wagtailbase.models import (
 from wagtail.wagtailcore.models import Page
 
 
+FIXTURES = ['auth.json', 'wagtailcore.json', 'wagtailbase.json' ]
+
+
 class TestRelatedLink(TestCase):
-    fixtures = ['wagtailbase.json', 'wagtailcore.json']
+    fixtures = FIXTURES
 
     def setUp(self):
         self.link = IndexPageRelatedLink.objects.get(id=1)
@@ -20,7 +23,7 @@ class TestRelatedLink(TestCase):
 
 
 class TestIndexPage(TestCase):
-    fixtures = ['wagtailbase.json', 'wagtailcore.json']
+    fixtures = FIXTURES
 
     def setUp(self):
         self.index_page = IndexPage.objects.filter(
@@ -37,7 +40,7 @@ class TestIndexPage(TestCase):
 
 
 class TestRichTextPage(TestCase):
-    fixtures = ['wagtailbase.json', 'wagtailcore.json']
+    fixtures = FIXTURES
 
     def setUp(self):
         self.index_page = IndexPage.objects.filter(
@@ -50,7 +53,7 @@ class TestRichTextPage(TestCase):
 
 
 class TestBlogIndexPage(TestCase):
-    fixtures = ['wagtailbase.json', 'wagtailcore.json']
+    fixtures = FIXTURES
 
     def setUp(self):
         self.blog = BlogIndexPage.objects.filter(slug='blog').first()
