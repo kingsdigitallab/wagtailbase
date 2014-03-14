@@ -20,6 +20,16 @@
   "fields": {}
 },
 {
+  "pk": 7, 
+  "model": "wagtailbase.basepage", 
+  "fields": {}
+},
+{
+  "pk": 8, 
+  "model": "wagtailbase.basepage", 
+  "fields": {}
+},
+{
   "pk": 3, 
   "model": "wagtailbase.baseindexpage", 
   "fields": {
@@ -31,6 +41,13 @@
   "model": "wagtailbase.baseindexpage", 
   "fields": {
     "introduction": "<p>This blog contains no personal feelings</p>"
+  }
+},
+{
+  "pk": 8, 
+  "model": "wagtailbase.baseindexpage", 
+  "fields": {
+    "introduction": "<p>This index is nested</p>"
   }
 },
 {
@@ -48,7 +65,19 @@
   }
 },
 {
+  "pk": 7, 
+  "model": "wagtailbase.baserichtextpage", 
+  "fields": {
+    "content": "<p>this blog post contains an in-detail review of wagtail and how it cannot handle inheritance very well</p>"
+  }
+},
+{
   "pk": 3, 
+  "model": "wagtailbase.indexpage", 
+  "fields": {}
+},
+{
+  "pk": 8, 
   "model": "wagtailbase.indexpage", 
   "fields": {}
 },
@@ -79,6 +108,25 @@
   "model": "wagtailbase.blogpost", 
   "fields": {
     "date": "2014-03-14"
+  }
+},
+{
+  "pk": 7, 
+  "model": "wagtailbase.blogpost", 
+  "fields": {
+    "date": "2014-03-14"
+  }
+},
+{
+  "pk": 1, 
+  "model": "wagtailbase.blogpostrelatedlink", 
+  "fields": {
+    "link_page": null, 
+    "title": "wagtail", 
+    "link_external": "https://github.com/torchbox/wagtail", 
+    "sort_order": 0, 
+    "link_document": null, 
+    "page": 7
   }
 }
 ]

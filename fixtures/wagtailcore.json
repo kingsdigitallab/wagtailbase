@@ -52,7 +52,7 @@
   "model": "wagtailcore.page", 
   "fields": {
     "title": "Standard Index", 
-    "numchild": 1, 
+    "numchild": 2, 
     "show_in_menus": false, 
     "live": true, 
     "seo_title": "", 
@@ -90,7 +90,7 @@
   "model": "wagtailcore.page", 
   "fields": {
     "title": "Blog", 
-    "numchild": 1, 
+    "numchild": 2, 
     "show_in_menus": false, 
     "live": true, 
     "seo_title": "", 
@@ -121,6 +121,44 @@
     "path": "0001000100020001", 
     "url_path": "/home/blog/s-it/", 
     "slug": "s-it"
+  }
+},
+{
+  "pk": 7, 
+  "model": "wagtailcore.page", 
+  "fields": {
+    "title": "Another blog post", 
+    "numchild": 0, 
+    "show_in_menus": false, 
+    "live": true, 
+    "seo_title": "", 
+    "depth": 4, 
+    "search_description": "", 
+    "content_type": 37, 
+    "has_unpublished_changes": false, 
+    "owner": 1, 
+    "path": "0001000100020002", 
+    "url_path": "/home/blog/another-blog-post/", 
+    "slug": "another-blog-post"
+  }
+},
+{
+  "pk": 8, 
+  "model": "wagtailcore.page", 
+  "fields": {
+    "title": "Nested Index", 
+    "numchild": 0, 
+    "show_in_menus": false, 
+    "live": true, 
+    "seo_title": "", 
+    "depth": 4, 
+    "search_description": "", 
+    "content_type": 29, 
+    "has_unpublished_changes": false, 
+    "owner": 1, 
+    "path": "0001000100010002", 
+    "url_path": "/home/standard-index/nested-index/", 
+    "slug": "nested-index"
   }
 },
 {
@@ -164,6 +202,28 @@
     "submitted_for_moderation": false, 
     "content_json": "{\"related_links\": [], \"date\": \"2014-03-14\", \"title\": \"That's It!\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>Here be Dragons</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020001\", \"owner\": 1, \"pk\": 6, \"url_path\": \"/home/blog/s-it/\", \"slug\": \"s-it\"}", 
     "page": 6, 
+    "user": 1
+  }
+},
+{
+  "pk": 5, 
+  "model": "wagtailcore.pagerevision", 
+  "fields": {
+    "created_at": "2014-03-14T15:46:46.023Z", 
+    "submitted_for_moderation": false, 
+    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"wagtail\", \"link_external\": \"https://github.com/torchbox/wagtail\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 7}], \"date\": \"2014-03-14\", \"title\": \"Another blog post\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>this blog post contains an in-detail review of wagtail and how it cannot handle inheritance very well</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020002\", \"owner\": 1, \"pk\": 7, \"url_path\": \"/home/blog/another-blog-post/\", \"slug\": \"another-blog-post\"}", 
+    "page": 7, 
+    "user": 1
+  }
+},
+{
+  "pk": 6, 
+  "model": "wagtailcore.pagerevision", 
+  "fields": {
+    "created_at": "2014-03-14T15:47:23.175Z", 
+    "submitted_for_moderation": false, 
+    "content_json": "{\"related_links\": [], \"title\": \"Nested Index\", \"introduction\": \"<p>This index is nested</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"0001000100010002\", \"owner\": 1, \"pk\": 8, \"url_path\": \"/home/standard-index/nested-index/\", \"slug\": \"nested-index\"}", 
+    "page": 8, 
     "user": 1
   }
 },
