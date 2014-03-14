@@ -33,6 +33,5 @@ STATICFILES_FINDERS = (
 
 COMPRESS_PRECOMPILERS = (
     ('text/coffeescript', 'coffee --compile --stdio'),
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/x-scss', 'sass --scss --compass {infile} {outfile}'),
+    ('text/x-scss', 'django_libsass.SassCompiler'),
 )

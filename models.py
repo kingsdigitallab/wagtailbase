@@ -1,4 +1,4 @@
-from base import AbstractRelatedLink, AbstractPage
+from base import AbstractRelatedLink, BasePage
 
 from datetime import date
 
@@ -17,7 +17,8 @@ from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailcore.fields import RichTextField
 
 
-class IndexPage(AbstractPage):
+
+class IndexPage(BasePage):
 
     """Base class for index pages. Index pages are pages that will have
     children pages."""
@@ -29,14 +30,13 @@ class IndexPage(AbstractPage):
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
-        children = AbstractPage.objects.filter(
+        children = BasePage.objects.filter(
             live=True,
-            path__startswith=self.path).select_subclasses()
+            path__startswith=self.path).exclude(id=self.id).select_subclasses()
 
         return children
 
-
-class PageRelatedLink(Orderable, AbstractRelatedLink):
+class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
         'wagtailbase.IndexPage', related_name='related_links')
 
@@ -47,7 +47,7 @@ IndexPage.content_panels = [
 ]
 
 
-class RichTextPage(AbstractPage):
+class RichTextPage(BasePage):
 
     """Base class for rich text pages."""
     search_name = 'Rich Text Page'
@@ -65,10 +65,10 @@ class RichTextPage(AbstractPage):
         # No ancestors are index pages, returns the first page
         return Page.objects.first()
 
-
-class StandardRichTextLink(Orderable, AbstractRelatedLink):
+class RichTextPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
         'wagtailbase.RichTextPage', related_name='related_links')
+
 
 RichTextPage.content_panels = [
     FieldPanel('title', classname='full title'),

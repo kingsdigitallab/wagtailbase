@@ -2,7 +2,7 @@ from django.test import TestCase
 from wagtailbase.models import (
     IndexPage,
     RichTextPage,
-    PageRelatedLink)
+    IndexPageRelatedLink)
 
 from wagtail.wagtailcore.models import Page
 
@@ -11,7 +11,7 @@ class TestRelatedLink(TestCase):
     fixtures = ['wagtailbase.json', 'wagtailcore.json']
 
     def setUp(self):
-        self.link = PageRelatedLink.objects.get(id=1)
+        self.link = IndexPageRelatedLink.objects.get(id=1)
 
     def test_link(self):
         self.assertEqual('http://www.duckduckgo.com/', self.link.link)

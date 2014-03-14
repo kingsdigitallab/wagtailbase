@@ -1,14 +1,24 @@
 [
 {
   "pk": 3, 
+  "model": "wagtailbase.basepage", 
+  "fields": {}
+},
+{
+  "pk": 4, 
+  "model": "wagtailbase.basepage", 
+  "fields": {}
+},
+{
+  "pk": 3, 
   "model": "wagtailbase.indexpage", 
   "fields": {
-    "introduction": "<p>content of standard index</p>"
+    "introduction": "<p>standard index content</p>"
   }
 },
 {
   "pk": 1, 
-  "model": "wagtailbase.pagerelatedlink", 
+  "model": "wagtailbase.indexpagerelatedlink", 
   "fields": {
     "link_page": null, 
     "title": "link to something else", 
@@ -22,7 +32,7 @@
   "pk": 4, 
   "model": "wagtailbase.richtextpage", 
   "fields": {
-    "content": "<p>more content</p>"
+    "content": "<p>content of first page</p>"
   }
 }
 ]

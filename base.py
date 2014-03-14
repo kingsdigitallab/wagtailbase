@@ -8,6 +8,7 @@ from wagtail.wagtailcore.models import Page
 
 from model_utils.managers import InheritanceManager
 
+
 class AbstractLinkField(models.Model):
 
     """Abstract class for link fields."""
@@ -49,9 +50,14 @@ class AbstractRelatedLink(AbstractLinkField):
     class Meta:
         abstract = True
 
-class AbstractPage(Page):
-    """Abstract class Page which uses InheritanceManager."""
-    objects = InheritanceManager()
 
-    class Meta:
-        abstract = True
+class BasePage(Page):
+
+    """
+    Abstract class Page which uses InheritanceManager. This class
+    is not abstract to Django because it needs access to the
+    manager. It will not appear in the Wagtail admin, however.
+    """
+
+    objects = InheritanceManager()
+    is_abstract = True
