@@ -1,8 +1,0 @@
-{% extends "wagtailbase/base.html" %}
-
-{% block main %}
-    {% include "wagtailbase/includes/introduction.html" with introduction=self.introduction only %}
-
-    <h2>In this section</h2>
-    {% include "wagtailbase/includes/standard_index_page_children.html" with children=self.children %}
-{% endblock %}

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load rich_text %}
+{% load rich_text wagtailbase_tags %}
 
 {% block meta_title %}{{ self.title }}{% endblock %}
 
 {% block title %}{{ self.title }}{% endblock %}
 
-{% include "wagtailbase/includes/main_menu.html" %}
+{% get_site_root as sr %}
 
-{% block main %}{{ self.content | richtext }}{% endblock %}
+{% block main %}[{{ sr }}] {{ self.content | richtext }}{% endblock %}
