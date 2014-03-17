@@ -1,8 +1,8 @@
-Django
-South
+django
+south
 django-compressor
 django-modelcluster
-git+git://github.com/torchbox/wagtail.git
+wagtail
 django-taggit
 django-libsass
 django-model-utils
