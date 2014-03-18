@@ -9,7 +9,7 @@ from wagtailbase.models import (
 from wagtail.wagtailcore.models import Page
 
 
-FIXTURES = ['auth.json', 'wagtailcore.json', 'wagtailbase.json' ]
+FIXTURES = ['test_data.json']
 
 
 class TestRelatedLink(TestCase):
