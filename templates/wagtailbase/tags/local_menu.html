@@ -1,0 +1,11 @@
+{% load pageurl %}
+
+<h3>In this section</h3>
+<nav class="local clearfix">
+    <ul class="local-navigation">
+    {% for page in menu_pages %}
+        <li>
+            <a href="{% pageurl page %}">{{ page.title }}</a>
+        </li>
+    {% endfor %}
+</nav>

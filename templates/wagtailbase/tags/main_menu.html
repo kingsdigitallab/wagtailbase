@@ -1,0 +1,15 @@
+{% load pageurl %}
+
+<ul class="right">
+    <li>
+        <a class="{% if root.url == current_page.url %}selected{% endif %}"
+        href="{% pageurl root %}">{{ root.title }}</a>
+    </li>
+
+    {% for page in menu_pages %} 
+    <li>
+        <a class="{% if page.url == current_page.url %}selected{% endif %}"
+        href="{% pageurl page %}">{{ page.title }}</a>
+    </li>
+    {% endfor %} 
+</ul>

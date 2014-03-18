@@ -5,6 +5,13 @@
 
 {% block title %}{{ self.title }}{% endblock %}
 
-{% get_site_root as sr %}
+{% block main_menu %}
+{% get_site_root as site_root %}
+{% main_menu root=site_root current_page=self %}
+{% endblock %}
 
-{% block main %}[{{ sr }}] {{ self.content | richtext }}{% endblock %}
+{% block main %}{{ self.content | richtext }}{% endblock %}
+
+{% block local_menu %}
+{% local_menu current_page=self %}
+{% endblock %}
