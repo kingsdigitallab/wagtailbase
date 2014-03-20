@@ -21,13 +21,25 @@ def main_menu(context, root, current_page):
     return {'request': context['request'], 'root': root,
             'current_page': current_page, 'menu_pages': menu_pages}
 
-
+# Retrieves the secondary links for the 'also in this section' links
+# - either the children or siblings of the current page
 @register.inclusion_tag('wagtailbase/tags/local_menu.html', takes_context=True)
-def local_menu(context, current_page):
-    """Returns the local menu items, the parent and siblings of the current
-    page. Only live pages are returned."""
-    parent = current_page.index_page
-    menu_pages = parent.get_children().filter(live=True)
+def local_menu(context, current_page=None):
+    pages = []
+    if current_page:
+        pages = current_page.get_children().filter(
+            live=True,
+            show_in_menus=True
+        )
 
-    return {'request': context['request'], 'current_page': current_page,
-            'menu_pages': menu_pages}
+        # If no children, get siblings instead
+        if len(pages) == 0:
+            pages = current_page.get_other_siblings().filter(
+                live=True,
+                show_in_menus=True
+            )
+    return {
+        'menu_pages': pages,
+        # required by the pageurl tag that we want to use within this template
+        'request': context['request'],
+    }
