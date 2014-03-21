@@ -1,0 +1,41 @@
+{% if post %}
+    {% load pageurl rich_text %}
+
+    <article class="post" id="post{{post.id}}">
+
+        <header>
+            <h1 class="posttitle">
+                <a href="{% pageurl post %}">{{ post.title }}</a>
+            </h1>
+
+            <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
+
+            <p class="byline">by {{ post.owner }}</p>
+        </header>
+
+
+        {% if post.content %}
+            <section class="postcontent">
+                {{ post.content|richtext }}
+            </section>
+        {% endif %}
+
+        <footer>
+        {% with post.tags.all as tags %}
+            {% if tags %}
+                <h3>Tags</h3>
+                <ul class="tags">
+                {% for tag in tags %}
+                    <li class="tag">
+                        <a href="{% pageurl post.blog_index %}?tag={{ tag }}">{{ tag }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        </footer>
+
+    </article>
+
+
+{% endif %}
