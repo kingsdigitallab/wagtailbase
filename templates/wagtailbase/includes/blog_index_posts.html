@@ -1,11 +1,11 @@
 {% if children %}
-    {% load pageurl %}
+{% load pageurl %}
 
-    <ul class="{{ class }}">
+<ul class="{{ class }}">
     {% for page in children %}
-        <li>
-            {% include "wagtailbase/includes/blog_post_body.html" with post=page %}
-        </li>
+    <li>
+        {% include "wagtailbase/includes/blog_post_preview.html" with post=page %}
+    </li>
     {% endfor %}
-    </ul>
+</ul>
 {% endif %}

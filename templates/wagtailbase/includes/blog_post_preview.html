@@ -1,0 +1,16 @@
+{% extends "wagtailbase/includes/blog_post_body.html" %}
+
+{% if post %}
+{% load pageurl rich_text %}
+{% block posttitle %}
+<h2 class="posttitle">
+    <a href="{% pageurl post %}">{{ post.title }}</a>
+</h2>
+{% endblock %}
+
+{% block postcontent %}
+<section class="postcontent">
+    {{ post.content|richtext|truncatewords_html:50 }}
+</section>
+{% endblock %}
+{% endif %}
