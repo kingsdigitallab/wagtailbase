@@ -68,10 +68,10 @@ class BasePage(Page):
         if self.id == page.id:
             return True
 
-        parent = self.get_parent()
+        parent = self.get_parent().specific
 
         if parent and isinstance(
-            parent, BasePage) and parent.specific.is_current_or_ancestor(page):
+            parent, BasePage) and parent.is_current_or_ancestor(page):
             return True
 
         return False
