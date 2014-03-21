@@ -2,15 +2,17 @@
 
 {% if post %}
 {% load pageurl rich_text %}
-{% block posttitle %}
+
+{% block blog_post_title %}
 <h2 class="posttitle">
     <a href="{% pageurl post %}">{{ post.title }}</a>
 </h2>
 {% endblock %}
 
-{% block postcontent %}
+{% block blog_post_content %}
 <section class="postcontent">
     {{ post.content|richtext|truncatewords_html:50 }}
 </section>
 {% endblock %}
+
 {% endif %}

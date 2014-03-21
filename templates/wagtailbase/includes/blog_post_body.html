@@ -3,24 +3,24 @@
 
 <article class="post" id="post{{ post.id }}">
     <header>
-        {% block posttitle %}
+        {% block blog_post_title %}
         <h1 class="posttitle">{{ post.title }}</h1>
         {% endblock %}
 
-        {% block postauthor %}
+        {% block blog_post_author %}
         <p class="byline">by <a href="{% pageurl post.blog_index %}?author={{ post.owner.username }}">{{ post.owner }}</a>
             <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
         </p>
         {% endblock %}
     </header>
 
-    {% block postcontent %}
+    {% block blog_post_content %}
     <section class="postcontent">
         {{ post.content|richtext }}
     </section>
     {% endblock %}
 
-    {% block posttags %}
+    {% block blog_post_tags %}
     <footer>
         {% with post.tags.all as tags %}
         {% if tags %}
