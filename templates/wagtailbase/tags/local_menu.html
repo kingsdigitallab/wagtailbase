@@ -3,9 +3,11 @@
 <h3>In this section</h3>
 <nav class="local clearfix">
     <ul class="local-navigation">
-    {% for page in menu_pages %}
+        {% for page in menu_pages %}
         <li>
-            <a href="{% pageurl page %}">{{ page.title }}</a>
+            <a class="{% if page.url == current_page.url %}active{% endif %}"
+            href="{% pageurl page %}">{{ page.title }}</a>
         </li>
-    {% endfor %}
+        {% endfor %}
+    </ul>
 </nav>

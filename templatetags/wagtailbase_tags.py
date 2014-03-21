@@ -12,6 +12,13 @@ def get_site_root(context):
     return context['request'].site.root_page
 
 
+@register.filter
+def is_current_or_ancestor(page, current_page):
+    """Returns True if the given page is the current page or is an ancestor of
+    the current page."""
+    return current_page.is_current_or_ancestor(page)
+
+
 @register.inclusion_tag('wagtailbase/tags/main_menu.html', takes_context=True)
 def main_menu(context, root, current_page):
     """Returns the main menu items, the children of the root page. Only live
@@ -21,25 +28,22 @@ def main_menu(context, root, current_page):
     return {'request': context['request'], 'root': root,
             'current_page': current_page, 'menu_pages': menu_pages}
 
-# Retrieves the secondary links for the 'also in this section' links
-# - either the children or siblings of the current page
+
 @register.inclusion_tag('wagtailbase/tags/local_menu.html', takes_context=True)
 def local_menu(context, current_page=None):
-    pages = []
-    if current_page:
-        pages = current_page.get_children().filter(
-            live=True,
-            show_in_menus=True
-        )
+    """Retrieves the secondary links for the 'also in this section' links - 
+    either the children or siblings of the current page."""
+    menu_pages = []
 
-        # If no children, get siblings instead
-        if len(pages) == 0:
-            pages = current_page.get_other_siblings().filter(
-                live=True,
-                show_in_menus=True
-            )
-    return {
-        'menu_pages': pages,
-        # required by the pageurl tag that we want to use within this template
-        'request': context['request'],
-    }
+    if current_page:
+        menu_pages = current_page.get_children().filter(
+            live=True, show_in_menus=True)
+
+        # if no children, get siblings instead
+        if len(menu_pages) == 0:
+            menu_pages = current_page.get_siblings().filter(
+                live=True, show_in_menus=True)
+
+    # required by the pageurl tag that we want to use within this template
+    return {'request': context['request'], 'current_page': current_page,
+            'menu_pages': menu_pages}
