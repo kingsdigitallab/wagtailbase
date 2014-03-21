@@ -1,17 +1,23 @@
-{% extends "wagtailbase/base.html" %}
+{% extends "wagtailbase/index_page.html" %}
 
 {% load pageurl %}
 
 {% block main %}
-{% include "wagtailbase/includes/introduction.html" with introduction=self.introduction only %}
 
+{% block posts_tagged_as %}
 {% if request.GET.tag|length %}
 <h2>Showing posts tagged as {{ request.GET.tag|safe }} <a href="{% pageurl self %}">Show all</a></h2>
 {% endif %}
+{% endblock %}
 
+{% block posts_by %}
 {% if request.GET.author|length %}
 <h2>Showing posts by {{ request.GET.author|safe }} <a href="{% pageurl self %}">Show all</a></h2>
 {% endif %}
+{% endblock %}
 
+{% block index_page_children %}
 {% include "wagtailbase/includes/blog_index_posts.html" with children=self.children %}
+{% endblock %}
+
 {% endblock %}
