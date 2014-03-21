@@ -31,6 +31,23 @@ COMMON_PROMOTE_PANELS = (
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
 
+    def serve(self, request):
+        """Renders the children pages."""
+        pages = self.children
+
+        # Pagination
+        page = request.GET.get('page')
+        paginator = Paginator(pages, settings.ITEMS_PER_PAGE)
+
+        try:
+            pages = paginator.page(page)
+        except EmptyPage:
+            pages = paginator.page(paginator.num_pages)
+        except PageNotAnInteger:
+            pages = paginator.page(1)
+
+        return render(request, self.template, {'self': self, 'pages': pages})
+
 
 class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
