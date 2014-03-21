@@ -8,5 +8,5 @@
 {% if request.GET.tag|length %}
     <h2>Showing posts tagged as {{ request.GET.tag|safe }} <a href="{% pageurl self %}">Show all</a></h2>
 {% endif %}
-{% include "wagtailbase/includes/index_page_children.html" with children=self.children %}
+{% include "wagtailbase/includes/blog_index_posts.html" with children=self.children %}
 {% endblock %}

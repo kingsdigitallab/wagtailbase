@@ -2,11 +2,12 @@ from base import (AbstractRelatedLink,
                   BaseIndexPage,
                   BaseRichTextPage)
 
+
 from datetime import date
 
 from django.db import models
 from django.conf import settings
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import (Paginator, EmptyPage, PageNotAnInteger)
 from django.shortcuts import render
 
 from taggit.models import TaggedItemBase
@@ -14,8 +15,17 @@ from taggit.models import TaggedItemBase
 from modelcluster.fields import ParentalKey
 from modelcluster.tags import ClusterTaggableManager
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.wagtailadmin.edit_handlers import (
+    FieldPanel, InlinePanel, MultiFieldPanel)
 from wagtail.wagtailcore.models import Orderable
+
+
+COMMON_PROMOTE_PANELS = (
+    FieldPanel('slug'),
+    FieldPanel('seo_title'),
+    FieldPanel('show_in_menus'),
+    FieldPanel('search_description'),
+)
 
 
 class IndexPage(BaseIndexPage):
@@ -115,6 +125,17 @@ class BlogPost(BaseRichTextPage):
 
     search_name = 'Blog post'
 
+    @property
+    def blog_index(self):
+        # Find blog index in ancestors
+        for ancestor in reversed(self.get_ancestors()):
+            if isinstance(ancestor.specific, BlogIndexPage):
+                return ancestor
+
+        # No ancestors are blog indexes,
+        # just return first blog index in database
+        return BlogIndexPage.objects.first()
+
 
 class BlogPostRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey(
@@ -125,4 +146,9 @@ BlogPost.content_panels = [
     FieldPanel('date'),
     FieldPanel('content', classname='full'),
     InlinePanel(BlogPost, 'related_links', label='Related links')
+]
+
+BlogPost.promote_panels = [
+    MultiFieldPanel(COMMON_PROMOTE_PANELS, "Common page configuration"),
+    FieldPanel('tags'),
 ]

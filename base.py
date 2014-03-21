@@ -1,8 +1,8 @@
 from django.db import models
 from django.db.models.signals import post_init
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, \
-    PageChooserPanel
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
+                                                PageChooserPanel)
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
