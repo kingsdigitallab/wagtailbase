@@ -2,6 +2,19 @@ from django import template
 
 register = template.Library()
 
+@register.assignment_tag(takes_context=True)
+def get_request_parameters(context, exclude=None):
+    """Returns a string with all the request parameters except the exclude
+    parameter."""
+    params = ''
+    request = context['request']
+
+    for key, value in request.GET.items():
+        if key != exclude:
+            params += '&{key}={value}'.format(key=key, value=value)
+
+    return params
+
 
 @register.assignment_tag(takes_context=True)
 def get_site_root(context):

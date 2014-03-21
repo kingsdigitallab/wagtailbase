@@ -95,7 +95,7 @@ class BlogIndexPage(BaseIndexPage):
 
         # Pagination
         page = request.GET.get('page')
-        paginator = Paginator(posts, settings.BLOG_POSTS_PER_PAGE)
+        paginator = Paginator(posts, settings.ITEMS_PER_PAGE)
 
         try:
             posts = paginator.page(page)
