@@ -60,6 +60,22 @@ class BasePage(Page):
     is_abstract = True
     objects = InheritanceManager()
 
+    def is_current_or_ancestor(self, page):
+        """Returns True if the given page is the current page or is an ancestor
+        of the current page."""
+        page = page.specific
+
+        if self.id == page.id:
+            return True
+
+        parent = self.get_parent()
+
+        if parent and isinstance(
+            parent, BasePage) and parent.specific.is_current_or_ancestor(page):
+            return True
+
+        return False
+
 
 def handle_page_post_init(sender, instance, **kwargs):
     """Handler for the post init signal. Sets the Page.show_in_menus default
