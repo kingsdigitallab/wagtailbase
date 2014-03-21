@@ -1,4 +1,4 @@
-{% if children %}
+{% if related_links %}
     {% load pageurl %}
 
     {% if title %}
@@ -6,9 +6,9 @@
     {% endif %}
 
     <ul class="{{ class }}">
-    {% for page in children %}
+    {% for page in related_links %}
         <li>
-            <a href="{% pageurl page %}">{{ page.title }}</a>
+            <a href="{{ page.link }}">{{ page.title }}</a>
         </li>
     {% endfor %}
     </ul>

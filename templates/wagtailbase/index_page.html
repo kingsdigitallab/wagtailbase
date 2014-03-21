@@ -7,8 +7,11 @@
 {% endblock %}
 
 {% block index_page_children %}
-<h2>In this section</h2>
-{% include "wagtailbase/includes/index_page_children.html" with children=self.children %}
+{% include "wagtailbase/includes/index_page_children.html" with children=self.children title="In this section" %}
+{% endblock %}
+
+{% block related_links %}
+{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
 {% endblock %}
 
 {% endblock %}
