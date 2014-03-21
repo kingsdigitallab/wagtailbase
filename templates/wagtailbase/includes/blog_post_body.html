@@ -10,7 +10,7 @@
 
             <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
 
-            <p class="byline">by {{ post.owner }}</p>
+            <p class="byline">by <a href="{% pageurl post.blog_index %}?author={{ post.owner.username }}">{{ post.owner }}</a></p>
         </header>
 
 

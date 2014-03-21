@@ -89,6 +89,10 @@ class BlogIndexPage(BaseIndexPage):
         if tag:
             posts = posts.filter(tags__name=tag)
 
+        author = request.GET.get('author')
+        if author:
+            posts = posts.filter(owner__username=author)
+
         # Pagination
         page = request.GET.get('page')
         paginator = Paginator(posts, settings.BLOG_POSTS_PER_PAGE)
