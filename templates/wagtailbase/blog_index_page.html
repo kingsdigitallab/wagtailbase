@@ -1,6 +1,6 @@
 {% extends "wagtailbase/index_page.html" %}
 
-{% load pageurl %}
+{% load pageurl wagtailbase_tags %}
 
 {% block main %}
 
@@ -19,5 +19,7 @@
 {% block index_page_children %}
 {% include "wagtailbase/includes/blog_index_posts.html" with class="posts" %}
 {% endblock %}
+
+{% block latest_blog_post %}{% endblock %}
 
 {% endblock %}
