@@ -1,5 +1,7 @@
 from django import template
 
+from ..models import BlogPost
+
 register = template.Library()
 
 
@@ -61,3 +63,18 @@ def local_menu(context, current_page=None):
     # required by the pageurl tag that we want to use within this template
     return {'request': context['request'], 'current_page': current_page,
             'menu_pages': menu_pages}
+
+
+@register.inclusion_tag('wagtailbase/tags/latest_blog_post.html',
+    takes_context=True)
+def latest_blog_post(context, parent=None):
+    """Returns the latest blog post that is child of the given parent. If no
+    parent is given it defaults to the latest BlogPost object."""
+    post = None
+
+    if parent:
+        post = parent.get_children().order_by('-date').first()
+    else:
+        post = BlogPost.objects.all().order_by('-date').first()
+
+    return {'request': context['request'], 'post': post}
