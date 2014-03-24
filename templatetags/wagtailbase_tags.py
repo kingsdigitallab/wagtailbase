@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+
 @register.assignment_tag(takes_context=True)
 def get_request_parameters(context, exclude=None):
     """Returns a string with all the request parameters except the exclude
