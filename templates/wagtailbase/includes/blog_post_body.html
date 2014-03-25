@@ -1,5 +1,5 @@
 {% if post %}
-{% load pageurl rich_text %}
+{% load pageurl rich_text wagtailbase_tags %}
 
 <article class="post" id="post{{ post.id }}">
     <header>
@@ -10,6 +10,13 @@
         {% block blog_post_author %}
         <p class="byline">by <a href="{% pageurl post.blog_index %}?author={{ post.owner.username }}">{{ post.owner }}</a>
             <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
+
+            {% are_comments_allowed as allow_comments %}
+            {% if allow_comments %}
+            {% block blog_post_comments_link %}
+            <a href="#disqus_thread" data-disqus-identifier="{{ post.id }}">Comments</a>
+            {% endblock %}
+            {% endif %}
         </p>
         {% endblock %}
     </header>
