@@ -1,8 +1,21 @@
-from django import template
-
 from ..models import BlogPost
 
+from django import template
+from django.conf import settings
+
 register = template.Library()
+
+
+@register.assignment_tag(takes_context=False)
+def are_comments_allowed():
+    """Returns True if commenting on the site is allowed, False otherwise."""
+    return getattr(settings, 'ALLOW_COMMENTS', False)
+
+
+@register.assignment_tag(takes_context=False)
+def get_disqus_shortname():
+    """Returns the DISCUS shortname setting for comments."""
+    return settings.DISQUS_SHORTNAME
 
 
 @register.assignment_tag(takes_context=True)
@@ -47,7 +60,7 @@ def main_menu(context, root, current_page):
 
 @register.inclusion_tag('wagtailbase/tags/local_menu.html', takes_context=True)
 def local_menu(context, current_page=None):
-    """Retrieves the secondary links for the 'also in this section' links - 
+    """Retrieves the secondary links for the 'also in this section' links -
     either the children or siblings of the current page."""
     menu_pages = []
 
@@ -66,7 +79,7 @@ def local_menu(context, current_page=None):
 
 
 @register.inclusion_tag('wagtailbase/tags/latest_blog_post.html',
-    takes_context=True)
+                        takes_context=True)
 def latest_blog_post(context, parent=None):
     """Returns the latest blog post that is child of the given parent. If no
     parent is given it defaults to the latest BlogPost object."""
