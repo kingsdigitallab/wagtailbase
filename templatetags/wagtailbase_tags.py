@@ -3,6 +3,9 @@ from ..models import BlogPost
 from django import template
 from django.conf import settings
 
+from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.templatetags.pageurl import pageurl
+
 register = template.Library()
 
 
@@ -104,3 +107,14 @@ def main_menu(context, root, current_page):
 
     return {'request': context['request'], 'root': root,
             'current_page': current_page, 'menu_pages': menu_pages}
+
+
+@register.simple_tag(takes_context=True)
+def slugurl(context, slug):
+    """Returns the URL for the page that has the given slug."""
+    page = Page.objects.filter(slug=slug).first()
+
+    if page:
+        return pageurl(context, page)
+    else:
+        return '#'
