@@ -32,9 +32,7 @@ STATICFILES_FINDERS = (
 )
 
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/x-scss', 'django_libsass.SassCompiler'),
-    ('text/x-sass', 'django_libsass.SassCompiler'),
 )
 
 ITEMS_PER_PAGE = 10
