@@ -51,8 +51,11 @@ def has_local_menu(context, current_page):
     page."""
     site_root = get_site_root(context)
 
-    if current_page.id != site_root.id and not current_page.is_leaf():
-        return True
+    if current_page.id != site_root.id:
+        if current_page.depth == 4 and not current_page.is_leaf():
+            return True
+        elif current_page.depth > 4:
+            return True
 
     return False
 
@@ -90,7 +93,7 @@ def local_menu(context, current_page=None):
             live=True, show_in_menus=True)
 
         # if no children, get siblings instead
-        if len(menu_pages) == 0 and not current_page.is_leaf():
+        if len(menu_pages) == 0:
             menu_pages = current_page.get_siblings().filter(
                 live=True, show_in_menus=True)
 
