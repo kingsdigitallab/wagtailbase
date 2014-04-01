@@ -120,4 +120,4 @@ def slugurl(context, slug):
     if page:
         return pageurl(context, page)
     else:
-        return '#'
+        return None
