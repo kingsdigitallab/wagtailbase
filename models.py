@@ -12,9 +12,8 @@ from taggit.models import TaggedItemBase
 from modelcluster.fields import ParentalKey
 from modelcluster.tags import ClusterTaggableManager
 
-from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
-                                                MultiFieldPanel)
-from wagtail.wagtailcore.models import Orderable
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.wagtailcore.models import Orderable, Page
 
 
 class IndexPage(BaseIndexPage):
@@ -156,4 +155,5 @@ BlogPost.content_panels = [
     InlinePanel(BlogPost, 'related_links', label='Related links')
 ]
 
+BlogPost.promote_panels = Page.promote_panels[:]
 BlogPost.promote_panels.insert(0, FieldPanel('tags'))
