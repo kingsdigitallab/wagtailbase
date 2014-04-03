@@ -17,14 +17,6 @@ from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
 from wagtail.wagtailcore.models import Orderable
 
 
-COMMON_PROMOTE_PANELS = (
-    FieldPanel('slug'),
-    FieldPanel('seo_title'),
-    FieldPanel('show_in_menus'),
-    FieldPanel('search_description'),
-)
-
-
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
 
@@ -164,7 +156,4 @@ BlogPost.content_panels = [
     InlinePanel(BlogPost, 'related_links', label='Related links')
 ]
 
-BlogPost.promote_panels = [
-    MultiFieldPanel(COMMON_PROMOTE_PANELS, "Common page configuration"),
-    FieldPanel('tags'),
-]
+BlogPost.promote_panels.insert(0, FieldPanel('tags'))
