@@ -1,15 +1,15 @@
 {% load pageurl wagtailbase_tags %}
 
-<ul class="right">
+<ul class="main-navigation">
     <li>
         <a class="{% if root.url == current_page.url %}selected{% endif %}"
         href="{% pageurl root %}">{{ root.title }}</a>
     </li>
 
-    {% for page in menu_pages %} 
+    {% for page in menu_pages %}
     <li>
         <a class="{% if page|is_current_or_ancestor:current_page %}selected{% endif %}"
         href="{% pageurl page %}">{{ page.title }}</a>
     </li>
-    {% endfor %} 
+    {% endfor %}
 </ul>
