@@ -110,6 +110,27 @@ class BlogIndexPage(BaseIndexPage):
 
         return render(request, self.template, {'self': self, 'posts': posts})
 
+    def serve_by_author(self, request, author):
+        """Renders the blog posts filtered by author."""
+        posts = self.posts.filter(owner__username=author)
+
+        # Pagination
+        page = request.GET.get('page')
+        paginator = Paginator(posts, settings.ITEMS_PER_PAGE)
+
+        try:
+            posts = paginator.page(page)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'author': author,
+                       'posts': posts})
+
 
 class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey('wagtailbase.BlogIndexPage',
