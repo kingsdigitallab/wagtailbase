@@ -2,9 +2,8 @@
 
 <ul class="local-navigation">
     {% for page in menu_pages %}
-    <li>
-        <a class="{% if page.url == current_page.url %}active{% endif %}"
-        href="{% pageurl page %}">{{ page.title }}</a>
+    <li class="{% if page.url == current_page.url %}active{% endif %}">
+        <a href="{% pageurl page %}">{{ page.title }}</a>
     </li>
     {% endfor %}
 </ul>
