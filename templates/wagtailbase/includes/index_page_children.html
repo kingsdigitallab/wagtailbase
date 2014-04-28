@@ -5,7 +5,7 @@
     <h3>{{ title }}</h3>
     {% endif %}
 
-    <ul class="{{ class }}">
+    <ul class="{% if class %}{{ class }}{% endif %}">
     {% for page in pages %}
         <li>
             <a href="{% pageurl page %}">{{ page.title }}</a>

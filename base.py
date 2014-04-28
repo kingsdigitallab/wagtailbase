@@ -77,7 +77,7 @@ class BasePage(Page):
 def handle_page_post_init(sender, instance, **kwargs):
     """Handler for the post init signal. Sets the Page.show_in_menus default
     value to True."""
-    if isinstance(instance, Page):
+    if isinstance(instance, BasePage):
         instance.show_in_menus = True
 
 post_init.connect(handle_page_post_init)
