@@ -7,6 +7,8 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 
+from django.http import Http404
+
 from taggit.models import TaggedItemBase
 
 from modelcluster.fields import ParentalKey
@@ -88,15 +90,6 @@ class BlogIndexPage(BaseIndexPage):
         """Renders the blog posts."""
         posts = self.posts
 
-        # Filters by tag
-        tag = request.GET.get('tag')
-        if tag:
-            posts = posts.filter(tags__name=tag)
-
-        author = request.GET.get('author')
-        if author:
-            posts = posts.filter(owner__username=author)
-
         # Pagination
         page = request.GET.get('page')
         paginator = Paginator(posts, settings.ITEMS_PER_PAGE)
@@ -110,9 +103,19 @@ class BlogIndexPage(BaseIndexPage):
 
         return render(request, self.template, {'self': self, 'posts': posts})
 
-    def serve_by_author(self, request, author):
-        """Renders the blog posts filtered by author."""
-        posts = self.posts.filter(owner__username=author)
+    def filter_serve(self, request, filter_type, *args):
+        """Renders the blog posts filtered by arguments."""
+
+
+        ft = filter_type.lower()
+
+        if ft == 'author':
+            posts = self.posts.filter(owner__username=args[0])
+
+        elif ft == 'tag':
+            posts = self.posts.filter(tags__name=args[0])
+        else:
+            raise Http404
 
         # Pagination
         page = request.GET.get('page')
@@ -128,7 +131,7 @@ class BlogIndexPage(BaseIndexPage):
         return render(request,
                       self.template,
                       {'self': self,
-                       'author': author,
+                       'filter_' + filter_type: args,
                        'posts': posts})
 
 
