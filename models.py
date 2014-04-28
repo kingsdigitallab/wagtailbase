@@ -6,6 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
+import calendar
 
 from django.http import Http404
 
@@ -103,9 +104,22 @@ class BlogIndexPage(BaseIndexPage):
 
         return render(request, self.template, {'self': self, 'posts': posts})
 
+    def get_month_number(self, month):
+        names = dict((v, k) for k, v in enumerate(calendar.month_name))
+        abbrs = dict((v, k) for k, v in enumerate(calendar.month_name))
+
+        month_str = month.title()
+
+        try:
+            return names[month_str]
+        except KeyError:
+            try:
+                return abbr[month_str]
+            except KeyError:
+                return 0
+
     def filter_serve(self, request, filter_type, *args):
         """Renders the blog posts filtered by arguments."""
-
 
         ft = filter_type.lower()
 
@@ -114,6 +128,37 @@ class BlogIndexPage(BaseIndexPage):
 
         elif ft == 'tag':
             posts = self.posts.filter(tags__name=args[0])
+        elif ft == 'date':
+
+            date_filter = {}
+
+            date_params = list(args)
+
+            try:
+                year = date_params.pop(0)
+                date_filter['date__year'] = year
+            except IndexError:
+                pass
+
+            try:
+                month = date_params.pop(0).title()
+
+                m = self.get_month_number(month)
+                if m:
+                    date_filter['date__month'] = m
+                else:
+                    date_filter['date__month'] = month
+
+            except IndexError:
+                pass
+
+            try:
+                day = date_params.pop(0)
+                date_filter['date__day'] = day
+            except IndexError:
+                pass
+
+            posts = self.posts.filter(**date_filter)
         else:
             raise Http404
 
