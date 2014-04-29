@@ -4,6 +4,10 @@ from django.shortcuts import render
 
 from wagtailbase import models
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 def serve(request, index_path, archive_path):
     # two_days_ago = datetime.utcnow() - timedelta(days=2)
     # recent_posts = models.BlogPost.objects.filter(date__gt=two_days_ago).all()
