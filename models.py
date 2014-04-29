@@ -19,6 +19,10 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
 from wagtail.wagtailcore.models import Orderable, Page
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
 
@@ -106,7 +110,7 @@ class BlogIndexPage(BaseIndexPage):
 
     def get_month_number(self, month):
         names = dict((v, k) for k, v in enumerate(calendar.month_name))
-        abbrs = dict((v, k) for k, v in enumerate(calendar.month_name))
+        abbrs = dict((v, k) for k, v in enumerate(calendar.month_abbr))
 
         month_str = month.title()
 
@@ -114,9 +118,42 @@ class BlogIndexPage(BaseIndexPage):
             return names[month_str]
         except KeyError:
             try:
-                return abbr[month_str]
+                return abbrs[month_str]
             except KeyError:
                 return 0
+
+    def process_date_filter(self, date_params):
+        date_filter = {}
+
+        try:
+            year = date_params.pop(0)
+
+            date_filter['date__year'] = int(year)
+        except IndexError:
+            # no year specified in URL
+            pass
+
+        try:
+            month = date_params.pop(0)
+
+            m = self.get_month_number(month.title())
+
+            if m:
+                date_filter['date__month'] = m
+            else:
+                date_filter['date__month'] = month
+
+        except IndexError:
+            # No month specified in URL
+            pass
+
+        try:
+            day = date_params.pop(0)
+            date_filter['date__day'] = day
+        except IndexError:
+            pass
+
+        return date_filter
 
     def filter_serve(self, request, filter_type, *args):
         """Renders the blog posts filtered by arguments."""
@@ -129,36 +166,13 @@ class BlogIndexPage(BaseIndexPage):
         elif ft == 'tag':
             posts = self.posts.filter(tags__name=args[0])
         elif ft == 'date':
-
-            date_filter = {}
-
-            date_params = list(args)
+            date_filter = self.process_date_filter(list(args))
 
             try:
-                year = date_params.pop(0)
-                date_filter['date__year'] = year
-            except IndexError:
-                pass
-
-            try:
-                month = date_params.pop(0).title()
-
-                m = self.get_month_number(month)
-                if m:
-                    date_filter['date__month'] = m
-                else:
-                    date_filter['date__month'] = month
-
-            except IndexError:
-                pass
-
-            try:
-                day = date_params.pop(0)
-                date_filter['date__day'] = day
-            except IndexError:
-                pass
-
-            posts = self.posts.filter(**date_filter)
+                posts = self.posts.filter(**date_filter)
+            except ValueError:
+                # Invalid date filter
+                raise Http404
         else:
             raise Http404
 
@@ -176,7 +190,7 @@ class BlogIndexPage(BaseIndexPage):
         return render(request,
                       self.template,
                       {'self': self,
-                       'filter_' + filter_type: args,
+                       ('filter_' + filter_type): args,
                        'posts': posts})
 
 
