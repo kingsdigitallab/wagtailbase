@@ -35,6 +35,10 @@ COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
+SOUTH_MIGRATION_MODULES = {
+    'taggit': 'taggit.south_migrations',
+}
+
 ITEMS_PER_PAGE = 10
 
 ALLOW_COMMENTS = True
