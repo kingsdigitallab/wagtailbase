@@ -32,7 +32,7 @@ urlpatterns = patterns('',
                        url(r'^wagtail/', include(wagtailadmin_urls)),
                        url(r'^search/', include(wagtailsearch_frontend_urls)),
                        url(r'^documents/', include(wagtaildocs_urls)),
-                       url(r'^((?:[\w\-]+/)*)(?:archives/)((?:[\w\-]+/)*)$',
+                       url(r'^((?:[\w\-]+/)*)(?:archive/)((?:[\w\-]+/)*)$',
                            'wagtailbase.views.archives.serve'),
                        url(r'', include(wagtail_urls)),
                        )
