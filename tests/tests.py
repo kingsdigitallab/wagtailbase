@@ -36,7 +36,7 @@ class TestIndexPage(TestCase):
 
         self.assertEqual(self.child_page,
                          self.index_page.get_children().first().specific)
-        self.assertEqual(self.child_page, self.index_page.children.first())
+        self.assertEqual(self.child_page, self.index_page.children.first().specific)
 
 
 class TestRichTextPage(TestCase):

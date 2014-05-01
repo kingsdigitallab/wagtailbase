@@ -1,8 +1,6 @@
 from django.db import models
 from django.db.models.signals import post_init
 
-from model_utils.managers import InheritanceManager
-
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
@@ -55,7 +53,6 @@ class BasePage(Page):
     abstract to Django because it needs access to the manager. It will not
     appear in the Wagtail admin, however."""
     is_abstract = True
-    objects = InheritanceManager()
 
     def is_current_or_ancestor(self, page):
         """Returns True if the given page is the current page or is an ancestor
@@ -94,9 +91,7 @@ class BaseIndexPage(BasePage):
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
-        return BasePage.objects.filter(
-            live=True,
-            path__startswith=self.path).exclude(id=self.id).select_subclasses()
+        return self.get_children().live()
 
 
 class BaseRichTextPage(BasePage):
