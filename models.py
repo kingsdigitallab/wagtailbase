@@ -108,6 +108,10 @@ class BlogIndexPage(BaseIndexPage):
 
         return render(request, self.template, {'self': self, 'posts': posts})
 
+    @property
+    def active_months(self):
+        return self.posts.values('date').distinct()
+
     def get_month_number(self, month):
         names = dict((v, k) for k, v in enumerate(calendar.month_name))
         abbrs = dict((v, k) for k, v in enumerate(calendar.month_abbr))
