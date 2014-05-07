@@ -8,7 +8,7 @@
     <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
 </p>
 <p>
-    {{ post.content|richtext|truncatewords_html:20 }}
+    {{ post.content|richtext|truncatewords_html:75 }}
 </p>
 
 {% endif %}
