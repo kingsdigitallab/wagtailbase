@@ -6,6 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
+from django.conf.urls import url
 import calendar
 
 from django.http import Http404
@@ -91,6 +92,20 @@ class BlogIndexPage(BaseIndexPage):
         return BlogPost.objects.filter(
             live=True, path__startswith=self.path).order_by('-date')
 
+    def get_subpage_urls(self):
+        return [
+            url(r'^$', self.serve, name='main'),
+            url(r'^author/(?P<author>\w+)/$',
+                self.archive, name='archive_author'),
+            url(r'^tag/(?P<tag>\w+)/$', self.archive, name='archive_tag'),
+            url((r'^date/'
+                 r'/(?P<year>\d{4})'
+                 r'/(?P<month>(?:\w+|\d{1,2}))'
+                 r'/(?P<day>\d{1,2})'
+                 r'/$'),
+                self.archive, name='archive_date'),
+        ]
+
     def serve(self, request):
         """Renders the blog posts."""
         posts = self.posts
@@ -108,69 +123,34 @@ class BlogIndexPage(BaseIndexPage):
 
         return render(request, self.template, {'self': self, 'posts': posts})
 
-    @property
-    def active_months(self):
-        return self.posts.values('date').distinct()
+    def archive(self, request,
+                author=None,
+                tag=None,
+                year=None,
+                month=None,
+                day=None):
+        """Renders filtered blog posts."""
 
-    def get_month_number(self, month):
-        names = dict((v, k) for k, v in enumerate(calendar.month_name))
-        abbrs = dict((v, k) for k, v in enumerate(calendar.month_abbr))
+        logging.debug('archive = [{}]'.format(', '.join(author, tag, year, month, day)))
 
-        month_str = month.title()
+        if author:
+            posts = self.posts.filter(owner__username=author)
 
-        try:
-            return names[month_str]
-        except KeyError:
-            try:
-                return abbrs[month_str]
-            except KeyError:
-                return 0
+        elif tag:
+            posts = self.posts.filter(tags__name=tag)
+        elif year:
+            date_filter = {'date__year': int(year)}
 
-    def process_date_filter(self, date_params):
-        date_filter = {}
+            if month:
+                m = self.get_month_number(month.title())
 
-        try:
-            year = date_params.pop(0)
+                if m:
+                    date_filter['date__month'] = m
+                else:
+                    date_filter['date__month'] = month
 
-            date_filter['date__year'] = int(year)
-        except IndexError:
-            # no year specified in URL
-            pass
-
-        try:
-            month = date_params.pop(0)
-
-            m = self.get_month_number(month.title())
-
-            if m:
-                date_filter['date__month'] = m
-            else:
-                date_filter['date__month'] = month
-
-        except IndexError:
-            # No month specified in URL
-            pass
-
-        try:
-            day = date_params.pop(0)
-            date_filter['date__day'] = day
-        except IndexError:
-            pass
-
-        return date_filter
-
-    def filter_serve(self, request, filter_type, *args):
-        """Renders the blog posts filtered by arguments."""
-
-        ft = filter_type.lower()
-
-        if ft == 'author':
-            posts = self.posts.filter(owner__username=args[0])
-
-        elif ft == 'tag':
-            posts = self.posts.filter(tags__name=args[0])
-        elif ft == 'date':
-            date_filter = self.process_date_filter(list(args))
+                if day:
+                    date_filter['date__day'] = day
 
             try:
                 posts = self.posts.filter(**date_filter)
@@ -196,6 +176,26 @@ class BlogIndexPage(BaseIndexPage):
                       {'self': self,
                        ('filter_' + filter_type): args,
                        'posts': posts})
+
+    @property
+    def active_months(self):
+        return self.posts.values('date').distinct()
+
+    def get_month_number(self, month):
+        names = dict((v, k) for k, v in enumerate(calendar.month_name))
+        abbrs = dict((v, k) for k, v in enumerate(calendar.month_abbr))
+
+        month_str = month.title()
+
+        try:
+            return names[month_str]
+        except KeyError:
+            try:
+                return abbrs[month_str]
+            except KeyError:
+                return 0
+
+
 
 
 class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):

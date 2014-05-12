@@ -1,6 +1,10 @@
 from django.db import models
 from django.db.models.signals import post_init
 
+from django.http import Http404
+from django.core.urlresolvers import RegexURLResolver
+from django.conf.urls import url
+
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
@@ -8,7 +12,12 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class AbstractLinkField(models.Model):
+
     """Abstract class for link fields."""
     link_document = models.ForeignKey('wagtaildocs.Document', blank=True,
                                       null=True, related_name='+')
@@ -36,6 +45,7 @@ class AbstractLinkField(models.Model):
 
 
 class AbstractRelatedLink(AbstractLinkField):
+
     """Abstract class for related links."""
     title = models.CharField(max_length=256, help_text='Link title')
 
@@ -49,9 +59,17 @@ class AbstractRelatedLink(AbstractLinkField):
 
 
 class BasePage(Page):
-    """Abstract class Page which uses InheritanceManager. This class is not
-    abstract to Django because it needs access to the manager. It will not
-    appear in the Wagtail admin, however."""
+
+    """Abstract class Page. This class is not abstract to Django because
+    it needs access to the manager. It will not appear in the Wagtail
+    admin, however.
+
+    It implements methods to overload routing and serving multiple views
+    on a page. Based in the SuperPage class from wagtail here:
+    https://gist.github.com/kaedroho/10296244#file-superpage-py
+
+    All pages in wagtailbase inherit from this class."""
+
     is_abstract = True
 
     def is_current_or_ancestor(self, page):
@@ -65,10 +83,55 @@ class BasePage(Page):
         parent = self.get_parent().specific
 
         if parent and isinstance(
-            parent, BasePage) and parent.is_current_or_ancestor(page):
+                parent, BasePage) and parent.is_current_or_ancestor(page):
             return True
 
         return False
+
+    def get_subpage_urls(self):
+        """
+        Override this method to add your own subpage urls
+        """
+        return [
+            url('^$', self.serve, name='main'),
+        ]
+
+    def reverse_subpage(self, name, *args, **kwargs):
+        """
+        This method does the same job as Djangos' built in
+        "urlresolvers.reverse()" function for subpage urlconfs.
+        """
+        resolver = RegexURLResolver(r'^', self.get_subpage_urls())
+        return self.url + resolver.reverse(name, *args, **kwargs)
+
+    def resolve_subpage(self, path):
+        """
+        This finds a view method/function from a URL path.
+        """
+        logging.debug('resolving subpage with path `{}`'.format(path))
+        logging.debug('urls `{}`'.format(self.get_subpage_urls()))
+        resolver = RegexURLResolver(r'^', self.get_subpage_urls())
+        logging.debug('resolved to `{}`'.format(resolver))
+        return resolver.resolve(path)
+
+    def route(self, request, path_components):
+        """
+        This hooks the subpage urls into Wagtails routing.
+        """
+
+        logging.debug('{} route'.format(self))
+        if self.live:
+            try:
+                path = '/'.join(path_components)
+                if path:
+                    path += '/'
+
+                view, args, kwargs = self.resolve_subpage(path)
+                return view(request, *args, **kwargs)
+            except Http404:
+                pass
+
+        return super(BasePage, self).route(request, path_components)
 
 
 def handle_page_post_init(sender, instance, **kwargs):
@@ -81,6 +144,7 @@ post_init.connect(handle_page_post_init)
 
 
 class BaseIndexPage(BasePage):
+
     """Base class for index pages. Index pages are pages that will have
     children pages."""
     introduction = RichTextField(blank=True)
@@ -95,6 +159,7 @@ class BaseIndexPage(BasePage):
 
 
 class BaseRichTextPage(BasePage):
+
     """Base class for rich text pages."""
     content = RichTextField()
 

@@ -126,7 +126,7 @@ def slugurl(context, slug):
 @register.simple_tag(takes_context=True)
 def archiveurl(context, page, *args):
     """Returns the URL for the page that has the given slug."""
-    archive_url = ['archive']
+    archive_url = []
 
     try:
         # is author

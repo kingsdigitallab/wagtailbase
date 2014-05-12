@@ -2,6 +2,6 @@ django
 south
 django-compressor
 django-modelcluster
--e git://github.com/janrito/wagtail.git@get_page_from_path#egg=wagtail
+wagtail
 django-taggit
 django-libsass
