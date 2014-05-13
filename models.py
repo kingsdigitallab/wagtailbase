@@ -98,7 +98,16 @@ class BlogIndexPage(BaseIndexPage):
             url(r'^author/(?P<author>\w+)/$',
                 self.archive, name='archive_author'),
             url(r'^tag/(?P<tag>\w+)/$', self.archive, name='archive_tag'),
-            url((r'^date/'
+            url((r'^date'
+                 r'/(?P<year>\d{4})'
+                 r'/$'),
+                self.archive, name='archive_date'),
+            url((r'^date'
+                 r'/(?P<year>\d{4})'
+                 r'/(?P<month>(?:\w+|\d{1,2}))'
+                 r'/$'),
+                self.archive, name='archive_date'),
+            url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/(?P<month>(?:\w+|\d{1,2}))'
                  r'/(?P<day>\d{1,2})'
@@ -131,26 +140,46 @@ class BlogIndexPage(BaseIndexPage):
                 day=None):
         """Renders filtered blog posts."""
 
-        logging.debug('archive = [{}]'.format(', '.join(author, tag, year, month, day)))
+        ft = None
+        filter_type = None
+        filter_format = None
 
         if author:
             posts = self.posts.filter(owner__username=author)
+            ft = ('author', author)
 
         elif tag:
             posts = self.posts.filter(tags__name=tag)
+            ft = ('tag', tag)
+
         elif year:
             date_filter = {'date__year': int(year)}
+            date_factory = [int(year)]
+            date_format = ['Y']
 
             if month:
                 m = self.get_month_number(month.title())
 
                 if m:
                     date_filter['date__month'] = m
+                    date_factory.append(int(m))
                 else:
                     date_filter['date__month'] = month
+                    date_factory.append(int(month))
 
-                if day:
-                    date_filter['date__day'] = day
+                date_format.append('N')
+            else:
+                date_factory.append(1)
+
+            if day:
+                date_filter['date__day'] = int(day)
+                date_factory.append(int(day))
+                date_format.append('d')
+            else:
+                date_factory.append(1)
+
+            ft = ('date', date(*date_factory))
+            filter_format = ' '.join(reversed(date_format))
 
             try:
                 posts = self.posts.filter(**date_filter)
@@ -171,11 +200,15 @@ class BlogIndexPage(BaseIndexPage):
         except PageNotAnInteger:
             posts = paginator.page(1)
 
-        return render(request,
-                      self.template,
-                      {'self': self,
-                       ('filter_' + filter_type): args,
-                       'posts': posts})
+        return render(
+            request,
+            self.template,
+            {'self': self,
+             'posts': posts,
+             'filter': ft[1],
+             'filter_type': ft[0],
+             'filter_format': filter_format
+             })
 
     @property
     def active_months(self):
@@ -194,8 +227,6 @@ class BlogIndexPage(BaseIndexPage):
                 return abbrs[month_str]
             except KeyError:
                 return 0
-
-
 
 
 class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):
