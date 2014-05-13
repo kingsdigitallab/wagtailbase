@@ -92,6 +92,14 @@ class BlogIndexPage(BaseIndexPage):
         return BlogPost.objects.filter(
             live=True, path__startswith=self.path).order_by('-date')
 
+    @property
+    def active_months(self):
+        dates = self.posts.values('date').distinct()
+        new_dates = set([date(d['date'].year, d['date'].month, 1)
+                        for d in dates])
+
+        return list(new_dates)
+
     def get_subpage_urls(self):
         return [
             url(r'^$', self.serve, name='main'),
@@ -200,19 +208,14 @@ class BlogIndexPage(BaseIndexPage):
         except PageNotAnInteger:
             posts = paginator.page(1)
 
-        return render(
-            request,
-            self.template,
-            {'self': self,
-             'posts': posts,
-             'filter': ft[1],
-             'filter_type': ft[0],
-             'filter_format': filter_format
-             })
-
-    @property
-    def active_months(self):
-        return self.posts.values('date').distinct()
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': posts,
+                       'filter': ft[1],
+                       'filter_type': ft[0],
+                       'filter_format': filter_format
+                       })
 
     def get_month_number(self, month):
         names = dict((v, k) for k, v in enumerate(calendar.month_name))
