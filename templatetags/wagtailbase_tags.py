@@ -121,3 +121,24 @@ def slugurl(context, slug):
         return pageurl(context, page)
     else:
         return None
+
+
+@register.simple_tag(takes_context=True)
+def archiveurl(context, page, *args):
+    """Returns the URL for the page that has the given slug."""
+    archive_url = []
+
+    try:
+        # is author
+        archive_url += ['author', args[0].username]
+    except AttributeError:
+        try:
+            # is tag
+            archive_url += ['tag', args[0].name]
+        except AttributeError:
+            # date
+            archive_url += ['date'] + [str(arg) for arg in args]
+    except IndexError:
+        archive_url = []
+
+    return pageurl(context, page) + '/'.join(archive_url)

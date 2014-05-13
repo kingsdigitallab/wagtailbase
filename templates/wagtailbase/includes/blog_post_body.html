@@ -8,7 +8,7 @@
         {% endblock %}
 
         {% block blog_post_author %}
-        <p class="byline">by <a href="{% pageurl post.blog_index %}?author={{ post.owner.username }}">{{ post.owner }}</a>
+        <p class="byline">by <a href="{% archiveurl post.blog_index post.owner %}">{{ post.owner }}</a>
             <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
 
             {% are_comments_allowed as allow_comments %}
@@ -35,7 +35,7 @@
         <ul class="tags">
             {% for tag in tags %}
             <li class="tag">
-                <a href="{% pageurl post.blog_index %}?tag={{ tag }}">{{ tag }}</a>
+                <a href="{% archiveurl post.blog_index tag %}">{{ tag }}</a>
             </li>
             {% endfor %}
         </ul>
