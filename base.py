@@ -155,7 +155,7 @@ class BaseIndexPage(BasePage):
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
-        return self.get_children().live()
+        return self.get_children().filter(live=True)
 
 
 class BaseRichTextPage(BasePage):
