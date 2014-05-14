@@ -98,7 +98,7 @@ class BlogIndexPage(BaseIndexPage):
         new_dates = set([date(d['date'].year, d['date'].month, 1)
                         for d in dates])
 
-        return list(new_dates)
+        return sorted(new_dates, reverse=True)
 
     def get_subpage_urls(self):
         return [
