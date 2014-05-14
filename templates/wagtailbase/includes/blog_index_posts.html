@@ -6,6 +6,8 @@
     <li>
         {% include "wagtailbase/includes/blog_post_preview.html" with post=post %}
     </li>
+    {% empty %}
+        <li>Sorry, nothing to show here.</li>
     {% endfor %}
 </ul>
 

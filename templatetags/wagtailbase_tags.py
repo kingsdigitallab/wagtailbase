@@ -2,9 +2,15 @@ from ..models import BlogPost
 
 from django import template
 from django.conf import settings
+from django.utils.text import slugify
+from django.template.defaultfilters import stringfilter
+
 
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.templatetags.pageurl import pageurl
+
+from wagtailbase.util import unslugify
+
 
 register = template.Library()
 
@@ -130,11 +136,11 @@ def archiveurl(context, page, *args):
 
     try:
         # is author
-        archive_url += ['author', args[0].username]
+        archive_url += ['author', slugify(args[0].username)]
     except AttributeError:
         try:
             # is tag
-            archive_url += ['tag', args[0].name]
+            archive_url += ['tag', slugify(args[0].name)]
         except AttributeError:
             # date
             archive_url += ['date'] + [str(arg) for arg in args]
@@ -142,3 +148,9 @@ def archiveurl(context, page, *args):
         archive_url = []
 
     return pageurl(context, page) + '/'.join(archive_url)
+
+
+@register.filter(name="unslugify")
+@stringfilter
+def unslugify_filter(value):
+    return unslugify(value)

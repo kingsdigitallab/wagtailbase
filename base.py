@@ -119,7 +119,7 @@ class BasePage(Page):
         This hooks the subpage urls into Wagtails routing.
         """
 
-        logging.debug('{} route'.format(self))
+        logging.debug('{} route with {}'.format(self, path_components))
         if self.live:
             try:
                 path = '/'.join(path_components)

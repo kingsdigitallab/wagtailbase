@@ -3,11 +3,13 @@ from base import AbstractRelatedLink, BaseIndexPage, BaseRichTextPage
 from datetime import date
 
 from django.db import models
+
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.conf.urls import url
 import calendar
+
 
 from django.http import Http404
 
@@ -18,6 +20,8 @@ from modelcluster.tags import ClusterTaggableManager
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
 from wagtail.wagtailcore.models import Orderable, Page
+
+from wagtailbase.util import unslugify
 
 
 import logging
@@ -103,9 +107,9 @@ class BlogIndexPage(BaseIndexPage):
     def get_subpage_urls(self):
         return [
             url(r'^$', self.serve, name='main'),
-            url(r'^author/(?P<author>\w+)/$',
+            url(r'^author/(?P<author>[\w ]+)/$',
                 self.archive, name='archive_author'),
-            url(r'^tag/(?P<tag>\w+)/$', self.archive, name='archive_tag'),
+            url(r'^tag/(?P<tag>[\w ]+)/$', self.archive, name='archive_tag'),
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/$'),
@@ -148,16 +152,22 @@ class BlogIndexPage(BaseIndexPage):
                 day=None):
         """Renders filtered blog posts."""
 
+        logging.warn('tag: {}'.format(tag))
+
         ft = None
         filter_type = None
         filter_format = None
 
         if author:
-            posts = self.posts.filter(owner__username=author)
+            posts = self.posts.filter(owner__username=author)\
+                .filter(models.Q(owner__username=author) |
+                        models.Q(owner__username=unslugify(author)))
             ft = ('author', author)
 
         elif tag:
-            posts = self.posts.filter(tags__name=tag)
+
+            posts = self.posts.filter(models.Q(tags__name=tag) |
+                                      models.Q(tags__name=unslugify(tag)))
             ft = ('tag', tag)
 
         elif year:
