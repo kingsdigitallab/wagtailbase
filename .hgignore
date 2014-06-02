@@ -10,4 +10,3 @@ db.*
 local_settings.py
 logs
 static
-tags
