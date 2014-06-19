@@ -7,6 +7,10 @@
 
 {% include "wagtailbase/includes/blog_post_body.html" with post=self %}
 
+{% block attachments %}
+{{ block.super }}
+{% endblock %}
+
 {% block related_links %}
 {{ block.super }}
 {% endblock %}

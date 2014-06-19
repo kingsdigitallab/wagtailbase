@@ -1,4 +1,5 @@
-from base import AbstractRelatedLink, BaseIndexPage, BaseRichTextPage
+from base import (AbstractRelatedLink, AbstractAttachment,
+                  BaseIndexPage, BaseRichTextPage)
 
 from datetime import date
 
@@ -18,7 +19,8 @@ from taggit.models import TaggedItemBase
 from modelcluster.fields import ParentalKey
 from modelcluster.tags import ClusterTaggableManager
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.wagtailadmin.edit_handlers import (
+    FieldPanel, InlinePanel, MultiFieldPanel)
 from wagtail.wagtailcore.models import Orderable, Page
 
 from wagtailbase.util import unslugify
@@ -53,10 +55,20 @@ class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey('wagtailbase.IndexPage',
                        related_name='related_links')
 
+
+class IndexPageAttachment(Orderable, AbstractAttachment):
+    page = ParentalKey('wagtailbase.IndexPage',
+                       related_name='attachments')
+
 IndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(IndexPage, 'related_links', label='Related links')
+    InlinePanel(IndexPage, 'related_links', label='Related links'),
+    InlinePanel(IndexPage, 'attachments', label='Attachments')
+]
+
+IndexPage.promote_panels = [
+    MultiFieldPanel(BaseIndexPage.promote_panels, "Common page configuration"),
 ]
 
 
@@ -68,10 +80,22 @@ class RichTextPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey('wagtailbase.RichTextPage',
                        related_name='related_links')
 
+
+class RichTextAttachment(Orderable, AbstractAttachment):
+    page = ParentalKey('wagtailbase.RichTextPage',
+                       related_name='attachments')
+
+
 RichTextPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('content', classname='full'),
-    InlinePanel(RichTextPage, 'related_links', label='Related links')
+    InlinePanel(RichTextPage, 'related_links', label='Related links'),
+    InlinePanel(RichTextPage, 'attachments', label='Attachments')
+]
+
+RichTextPage.promote_panels = [
+    MultiFieldPanel(BaseRichTextPage.promote_panels,
+                    "Common page configuration"),
 ]
 
 
@@ -81,9 +105,21 @@ class HomePage(BaseRichTextPage):
     class Meta:
         verbose_name = 'Homepage'
 
+
+class HomePageAttachment(Orderable, AbstractAttachment):
+    page = ParentalKey('wagtailbase.HomePage',
+                       related_name='attachments')
+
+
 HomePage.content_panels = [
     FieldPanel('title', classname='full title'),
-    FieldPanel('content', classname='full')
+    FieldPanel('content', classname='full'),
+    InlinePanel(HomePage, 'attachments', label='Attachments')
+]
+
+HomePage.promote_panels = [
+    MultiFieldPanel(BaseRichTextPage.promote_panels,
+                    "Common page configuration"),
 ]
 
 
@@ -162,13 +198,15 @@ class BlogIndexPage(BaseIndexPage):
             posts = self.posts.filter(owner__username=author)\
                 .filter(models.Q(owner__username=author) |
                         models.Q(owner__username=unslugify(author)))
-            ft = ('author', author)
+            filter_type = 'author'
+            ft = author
 
         elif tag:
 
             posts = self.posts.filter(models.Q(tags__name=tag) |
                                       models.Q(tags__name=unslugify(tag)))
-            ft = ('tag', tag)
+            filter_type = 'tag'
+            ft = tag
 
         elif year:
             date_filter = {'date__year': int(year)}
@@ -196,7 +234,8 @@ class BlogIndexPage(BaseIndexPage):
             else:
                 date_factory.append(1)
 
-            ft = ('date', date(*date_factory))
+            filter_type = 'date'
+            ft = date(*date_factory)
             filter_format = ' '.join(reversed(date_format))
 
             try:
@@ -220,12 +259,13 @@ class BlogIndexPage(BaseIndexPage):
 
         return render(request,
                       self.template,
-                      {'self': self,
-                       'posts': posts,
-                       'filter': ft[1],
-                       'filter_type': ft[0],
-                       'filter_format': filter_format
-                       })
+                      {
+                          'self': self,
+                          'posts': posts,
+                          'filter': ft,
+                          'filter_type': filter_type,
+                          'filter_format': filter_format
+                      })
 
     def get_month_number(self, month):
         names = dict((v, k) for k, v in enumerate(calendar.month_name))
@@ -246,10 +286,22 @@ class BlogIndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey('wagtailbase.BlogIndexPage',
                        related_name='related_links')
 
+
+class BlogIndexPageAttachment(Orderable, AbstractAttachment):
+    page = ParentalKey('wagtailbase.BlogIndexPage',
+                       related_name='attachments')
+
+
 BlogIndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(BlogIndexPage, 'related_links', label='Related links')
+    InlinePanel(BlogIndexPage, 'related_links', label='Related links'),
+    InlinePanel(BlogIndexPage, 'attachments', label='Attachments')
+]
+
+BlogIndexPage.promote_panels = [
+    MultiFieldPanel(BaseIndexPage.promote_panels,
+                    "Common page configuration"),
 ]
 
 
@@ -279,12 +331,22 @@ class BlogPost(BaseRichTextPage):
 class BlogPostRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey('wagtailbase.BlogPost', related_name='related_links')
 
+
+class BlogPostAttachment(Orderable, AbstractAttachment):
+    page = ParentalKey('wagtailbase.BlogPost',
+                       related_name='attachments')
+
+
 BlogPost.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('date'),
     FieldPanel('content', classname='full'),
-    InlinePanel(BlogPost, 'related_links', label='Related links')
+    InlinePanel(BlogPost, 'related_links', label='Related links'),
+    InlinePanel(BlogPost, 'attachments', label='Attachments')
 ]
 
-BlogPost.promote_panels = Page.promote_panels[:]
-BlogPost.promote_panels.insert(0, FieldPanel('tags'))
+BlogPost.promote_panels = [
+    FieldPanel('tags'),
+    MultiFieldPanel(BaseRichTextPage.promote_panels,
+                    "Common page configuration"),
+]
