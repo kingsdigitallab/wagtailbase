@@ -8,6 +8,7 @@ from django.conf.urls import url
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
 
@@ -52,6 +53,28 @@ class AbstractRelatedLink(AbstractLinkField):
     panels = [
         FieldPanel('title'),
         MultiFieldPanel(AbstractLinkField.panels, 'Link')
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class AbstractAttachment(AbstractLinkField):
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    embed_url = models.URLField("Embed URL", blank=True)
+    caption = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        ImageChooserPanel('image'),
+        FieldPanel('embed_url'),
+        FieldPanel('caption'),
+        MultiFieldPanel(AbstractLinkField.panels, "Link"),
     ]
 
     class Meta:
