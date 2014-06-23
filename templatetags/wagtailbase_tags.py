@@ -58,7 +58,7 @@ def has_local_menu(context, current_page):
     site_root = get_site_root(context)
 
     if current_page.id != site_root.id:
-        if current_page.depth == 4 and not current_page.is_leaf():
+        if current_page.depth <= 4 and not current_page.is_leaf():
             return True
         elif current_page.depth > 4:
             return True
