@@ -10,6 +10,7 @@ from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.url_routing import RouteResult
 from wagtail.wagtailcore.fields import RichTextField
 
 
@@ -150,7 +151,7 @@ class BasePage(Page):
                     path += '/'
 
                 view, args, kwargs = self.resolve_subpage(path)
-                return view(request, *args, **kwargs)
+                return RouteResult(self, args=args, kwargs=kwargs)
             except Http404:
                 pass
 
