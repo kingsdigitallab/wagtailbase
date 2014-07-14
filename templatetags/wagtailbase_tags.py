@@ -7,7 +7,7 @@ from django.template.defaultfilters import stringfilter
 
 
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.templatetags.pageurl import pageurl
+from wagtail.wagtailcore.templatetags.wagtailcore_tags import pageurl
 
 from wagtailbase.util import unslugify
 
