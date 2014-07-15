@@ -118,9 +118,7 @@ class BasePage(Page):
         """
         Override this method to add your own subpage urls
         """
-        return [
-            url('^$', self.serve, name='main'),
-        ]
+        return []
 
     def reverse_subpage(self, name, *args, **kwargs):
         """
@@ -165,13 +163,20 @@ class BasePage(Page):
 
                     return RouteResult(self, self.resolve_subpage(path))
                 except Resolver404:
-                    pass
+                    return RouteResult(self)
 
             # Reraise
             raise e
 
-    def serve(self, request, view, args, kwargs):
-        return view(request, *args, **kwargs)
+    def serve(self, request, view=None, args=None, kwargs=None):
+
+        args = args if args else []
+        kwargs = kwargs if kwargs else {}
+
+        if view:
+            return view(request, *args, **kwargs)
+        else:
+            return super(BasePage, self).serve(request, *args, **kwargs)
 
 
 def handle_page_post_init(sender, instance, **kwargs):
