@@ -142,100 +142,37 @@ class BlogIndexPage(BaseIndexPage):
 
     def get_subpage_urls(self):
         return [
-            url(r'^$', self.serve, name='main'),
+            url(r'^$',
+                self.serve_listing,
+                name='main'),
+
             url(r'^author/(?P<author>[\w ]+)/$',
-                self.serve, name='by_author'),
-            url(r'^tag/(?P<tag>[\w ]+)/$', self.serve, name='by_tag'),
+                self.serve_by_author,
+                name='by_author'),
+
+            url(r'^tag/(?P<tag>[\w ]+)/$',
+                self.serve_by_tag,
+                name='by_tag'),
+
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/$'),
-                self.serve, name='by_date'),
+                self.serve_by_date, name='by_date'),
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/(?P<month>(?:\w+|\d{1,2}))'
                  r'/$'),
-                self.serve, name='by_date'),
+                self.serve_by_date, name='by_date'),
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/(?P<month>(?:\w+|\d{1,2}))'
                  r'/(?P<day>\d{1,2})'
                  r'/$'),
-                self.serve, name='by_date'),
+                self.serve_by_date, name='by_date'),
         ]
 
-    def serve(self, request,
-              author=None,
-              tag=None,
-              year=None,
-              month=None,
-              day=None):
-        """Renders the blog posts."""
-
-        template_dictionary = {'self': self}
-
-        if author:
-            # filter by author
-            posts = self.posts.filter(
-                models.Q(owner__username=author) |
-                models.Q(owner__username=unslugify(author)))
-
-            template_dictionary['filter_type'] = 'author'
-            template_dictionary['filter'] = author
-
-        elif tag:
-            # filter by tag
-            posts = self.posts.filter(
-                models.Q(tags__name=tag) |
-                models.Q(tags__name=unslugify(tag)))
-
-            template_dictionary['filter_type'] = 'tag'
-            tmeplate_dictionary['filter'] = tag
-
-        elif year:
-            # filter by date
-            date_filter = {'date__year': int(year)}
-            date_factory = [int(year)]
-            date_format = 'Y'
-
-            if month:
-                # specifiec month
-                m = self.get_month_number(month.title())
-
-                if m:
-                    date_filter['date__month'] = m
-                    date_factory.append(int(m))
-                else:
-                    date_filter['date__month'] = month
-                    date_factory.append(int(month))
-
-                date_format = 'N Y'
-            else:
-                # no month defined
-                date_factory.append(1)
-
-            if day:
-                # specific day defined
-                date_filter['date__day'] = int(day)
-                date_factory.append(int(day))
-                date_format = 'N d, Y'
-            else:
-                # no day defined
-                date_factory.append(1)
-
-            try:
-                posts = self.posts.filter(**date_filter)
-            except ValueError:
-                # Invalid date filter
-                raise Http404
-
-            template_dictionary['filter_type'] = 'date'
-            template_dictionary['filter'] = date(*date_factory)
-            template_dictionary['filter_format'] = date_format
-
-        else:
-            posts = self.posts
-
-        template_dictionary['posts'] = posts
+    def _paginate(self, request, posts):
+        """ Paginate posts """
 
         # Pagination
         page = request.GET.get('page')
@@ -248,7 +185,102 @@ class BlogIndexPage(BaseIndexPage):
         except PageNotAnInteger:
             posts = paginator.page(1)
 
-        return render(request, self.template, template_dictionary)
+        return posts
+
+    def serve_listing(self, request):
+        """main listing"""
+        posts = self.posts
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts)})
+
+    def serve_by_author(self, request, author=None):
+        """listing of posts by a specific author"""
+
+        if not author:
+            # Invalid author filter
+            raise Http404('Invalid Author')
+
+        posts = self.posts.filter(
+            models.Q(owner__username=author) |
+            models.Q(owner__username=unslugify(author)))
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts),
+                       'filter_type': 'author',
+                       'filter': author})
+
+    def serve_by_tag(self, request, tag=None):
+        """listing of posts in a specific tag"""
+        if not tag:
+            # Invalid tag filter
+            raise Http404('Invalid Tag')
+
+        posts = self.posts.filter(
+            models.Q(tags__name=tag) |
+            models.Q(tags__name=unslugify(tag)))
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts),
+                       'filter_type': 'tag',
+                       'filter': tag})
+
+    def serve_by_date(self, request, year=None, month=None, day=None):
+        """listing of posts published within a specific year, month, or date"""
+
+        if not year:
+            # Invalid year filter
+            raise Http404('Invalid Year')
+
+        # filter by date
+        date_filter = {'date__year': int(year)}
+        date_factory = [int(year)]
+        date_format = 'Y'
+
+        if month:
+            # specifiec month
+            m = self.get_month_number(month.title())
+
+            if m:
+                date_filter['date__month'] = m
+                date_factory.append(int(m))
+            else:
+                date_filter['date__month'] = month
+                date_factory.append(int(month))
+
+            date_format = 'N Y'
+        else:
+            # no month defined
+            date_factory.append(1)
+
+        if day:
+            # specific day defined
+            date_filter['date__day'] = int(day)
+            date_factory.append(int(day))
+            date_format = 'N d, Y'
+        else:
+            # no day defined
+            date_factory.append(1)
+
+        try:
+            posts = self.posts.filter(**date_filter)
+        except ValueError:
+            # Invalid date filter
+            raise Http404
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts),
+                       'filter_type': 'date',
+                       'filter_format': date_format,
+                       'filter': date(*date_factory)})
 
     def get_month_number(self, month):
         names = dict((v, k) for k, v in enumerate(calendar.month_name))

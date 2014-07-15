@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_init
 
 from django.http import Http404
-from django.core.urlresolvers import RegexURLResolver
+from django.core.urlresolvers import RegexURLResolver, Resolver404
 from django.conf.urls import url
 
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
@@ -144,18 +144,32 @@ class BasePage(Page):
         """
 
         logging.debug('{} route with {}'.format(self, path_components))
-        if self.live:
-            try:
-                path = '/'.join(path_components)
-                if path:
-                    path += '/'
 
-                view, args, kwargs = self.resolve_subpage(path)
-                return RouteResult(self, args=args, kwargs=kwargs)
-            except Http404:
-                pass
+        try:
+            route_result = super(BasePage, self).route(
+                request, path_components)
 
-        return super(BasePage, self).route(request, path_components)
+            # Don't allow supers route method to serve this page
+            if route_result.page == self:
+                raise Http404
+
+            return route_result
+        except Http404 as e:
+            if self.live:
+                try:
+                    path = '/'.join(path_components)
+                    if path:
+                        path += '/'
+
+                    return RouteResult(self, self.resolve_subpage(path))
+                except Resolver404:
+                    pass
+
+            # Reraise
+            raise e
+
+    def serve(self, request, view, args, kwargs):
+        return view(request, *args, **kwargs)
 
 
 def handle_page_post_init(sender, instance, **kwargs):
