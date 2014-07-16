@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_init
 
 from django.http import Http404
-from django.core.urlresolvers import RegexURLResolver
+from django.core.urlresolvers import RegexURLResolver, Resolver404
 from django.conf.urls import url
 
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
@@ -10,7 +10,10 @@ from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.url_routing import RouteResult
 from wagtail.wagtailcore.fields import RichTextField
+
+from wagtail.wagtailsearch import indexed
 
 
 import logging
@@ -115,9 +118,7 @@ class BasePage(Page):
         """
         Override this method to add your own subpage urls
         """
-        return [
-            url('^$', self.serve, name='main'),
-        ]
+        return []
 
     def reverse_subpage(self, name, *args, **kwargs):
         """
@@ -143,18 +144,39 @@ class BasePage(Page):
         """
 
         logging.debug('{} route with {}'.format(self, path_components))
-        if self.live:
-            try:
-                path = '/'.join(path_components)
-                if path:
-                    path += '/'
 
-                view, args, kwargs = self.resolve_subpage(path)
-                return view(request, *args, **kwargs)
-            except Http404:
-                pass
+        try:
+            route_result = super(BasePage, self).route(
+                request, path_components)
 
-        return super(BasePage, self).route(request, path_components)
+            # Don't allow supers route method to serve this page
+            if route_result.page == self:
+                raise Http404
+
+            return route_result
+        except Http404 as e:
+            if self.live:
+                try:
+                    path = '/'.join(path_components)
+                    if path:
+                        path += '/'
+
+                    return RouteResult(self, self.resolve_subpage(path))
+                except Resolver404:
+                    return RouteResult(self)
+
+            # Reraise
+            raise e
+
+    def serve(self, request, view=None, args=None, kwargs=None):
+
+        args = args if args else []
+        kwargs = kwargs if kwargs else {}
+
+        if view:
+            return view(request, *args, **kwargs)
+        else:
+            return super(BasePage, self).serve(request, *args, **kwargs)
 
 
 def handle_page_post_init(sender, instance, **kwargs):
@@ -172,7 +194,10 @@ class BaseIndexPage(BasePage):
     children pages."""
     introduction = RichTextField(blank=True)
 
-    indexed_fields = ('introduction', )
+    search_fields = Page.search_fields + ( # Inherit search_fields from Page
+        indexed.SearchField('introduction'),
+    )
+
     is_abstract = True
 
     @property
@@ -186,7 +211,9 @@ class BaseRichTextPage(BasePage):
     """Base class for rich text pages."""
     content = RichTextField()
 
-    indexed_fields = ('content', )
+    search_fields = Page.search_fields + ( # Inherit search_fields from Page
+        indexed.SearchField('content'),
+    )
     is_abstract = True
 
     @property

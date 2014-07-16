@@ -136,136 +136,151 @@ class BlogIndexPage(BaseIndexPage):
     def active_months(self):
         dates = self.posts.values('date').distinct()
         new_dates = set([date(d['date'].year, d['date'].month, 1)
-                        for d in dates])
+                         for d in dates])
 
         return sorted(new_dates, reverse=True)
 
     def get_subpage_urls(self):
         return [
-            url(r'^$', self.serve, name='main'),
+            url(r'^$',
+                self.serve_listing,
+                name='main'),
+
             url(r'^author/(?P<author>[\w ]+)/$',
-                self.archive, name='archive_author'),
-            url(r'^tag/(?P<tag>[\w ]+)/$', self.archive, name='archive_tag'),
+                self.serve_by_author,
+                name='by_author'),
+
+            url(r'^tag/(?P<tag>[\w ]+)/$',
+                self.serve_by_tag,
+                name='by_tag'),
+
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/$'),
-                self.archive, name='archive_date'),
+                self.serve_by_date, name='by_date'),
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/(?P<month>(?:\w+|\d{1,2}))'
                  r'/$'),
-                self.archive, name='archive_date'),
+                self.serve_by_date, name='by_date'),
             url((r'^date'
                  r'/(?P<year>\d{4})'
                  r'/(?P<month>(?:\w+|\d{1,2}))'
                  r'/(?P<day>\d{1,2})'
                  r'/$'),
-                self.archive, name='archive_date'),
+                self.serve_by_date, name='by_date'),
         ]
 
-    def serve(self, request):
-        """Renders the blog posts."""
+    def _paginate(self, request, posts):
+        """ Paginate posts """
+
+        # Pagination
+        page = request.GET.get('page')
+        paginator = Paginator(posts, settings.ITEMS_PER_PAGE)
+
+        try:
+            posts = paginator.page(page)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+
+        return posts
+
+    def serve_listing(self, request):
+        """main listing"""
         posts = self.posts
-
-        # Pagination
-        page = request.GET.get('page')
-        paginator = Paginator(posts, settings.ITEMS_PER_PAGE)
-
-        try:
-            posts = paginator.page(page)
-        except EmptyPage:
-            posts = paginator.page(paginator.num_pages)
-        except PageNotAnInteger:
-            posts = paginator.page(1)
-
-        return render(request, self.template, {'self': self, 'posts': posts})
-
-    def archive(self, request,
-                author=None,
-                tag=None,
-                year=None,
-                month=None,
-                day=None):
-        """Renders filtered blog posts."""
-
-        logging.warn('tag: {}'.format(tag))
-
-        ft = None
-        filter_type = None
-        filter_format = None
-
-        if author:
-            posts = self.posts.filter(owner__username=author)\
-                .filter(models.Q(owner__username=author) |
-                        models.Q(owner__username=unslugify(author)))
-            filter_type = 'author'
-            ft = author
-
-        elif tag:
-
-            posts = self.posts.filter(models.Q(tags__name=tag) |
-                                      models.Q(tags__name=unslugify(tag)))
-            filter_type = 'tag'
-            ft = tag
-
-        elif year:
-            date_filter = {'date__year': int(year)}
-            date_factory = [int(year)]
-            date_format = ['Y']
-
-            if month:
-                m = self.get_month_number(month.title())
-
-                if m:
-                    date_filter['date__month'] = m
-                    date_factory.append(int(m))
-                else:
-                    date_filter['date__month'] = month
-                    date_factory.append(int(month))
-
-                date_format.append('N')
-            else:
-                date_factory.append(1)
-
-            if day:
-                date_filter['date__day'] = int(day)
-                date_factory.append(int(day))
-                date_format.append('d')
-            else:
-                date_factory.append(1)
-
-            filter_type = 'date'
-            ft = date(*date_factory)
-            filter_format = ' '.join(reversed(date_format))
-
-            try:
-                posts = self.posts.filter(**date_filter)
-            except ValueError:
-                # Invalid date filter
-                raise Http404
-        else:
-            raise Http404
-
-        # Pagination
-        page = request.GET.get('page')
-        paginator = Paginator(posts, settings.ITEMS_PER_PAGE)
-
-        try:
-            posts = paginator.page(page)
-        except EmptyPage:
-            posts = paginator.page(paginator.num_pages)
-        except PageNotAnInteger:
-            posts = paginator.page(1)
 
         return render(request,
                       self.template,
-                      {
-                          'self': self,
-                          'posts': posts,
-                          'filter': ft,
-                          'filter_type': filter_type,
-                          'filter_format': filter_format
-                      })
+                      {'self': self,
+                       'posts': self._paginate(request, posts)})
+
+    def serve_by_author(self, request, author=None):
+        """listing of posts by a specific author"""
+
+        if not author:
+            # Invalid author filter
+            raise Http404('Invalid Author')
+
+        posts = self.posts.filter(
+            models.Q(owner__username=author) |
+            models.Q(owner__username=unslugify(author)))
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts),
+                       'filter_type': 'author',
+                       'filter': author})
+
+    def serve_by_tag(self, request, tag=None):
+        """listing of posts in a specific tag"""
+        if not tag:
+            # Invalid tag filter
+            raise Http404('Invalid Tag')
+
+        posts = self.posts.filter(
+            models.Q(tags__name=tag) |
+            models.Q(tags__name=unslugify(tag)))
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts),
+                       'filter_type': 'tag',
+                       'filter': tag})
+
+    def serve_by_date(self, request, year=None, month=None, day=None):
+        """listing of posts published within a specific year, month, or date"""
+
+        if not year:
+            # Invalid year filter
+            raise Http404('Invalid Year')
+
+        # filter by date
+        date_filter = {'date__year': int(year)}
+        date_factory = [int(year)]
+        date_format = 'Y'
+
+        if month:
+            # specifiec month
+            m = self.get_month_number(month.title())
+
+            if m:
+                date_filter['date__month'] = m
+                date_factory.append(int(m))
+            else:
+                date_filter['date__month'] = month
+                date_factory.append(int(month))
+
+            date_format = 'N Y'
+        else:
+            # no month defined
+            date_factory.append(1)
+
+        if day:
+            # specific day defined
+            date_filter['date__day'] = int(day)
+            date_factory.append(int(day))
+            date_format = 'N d, Y'
+        else:
+            # no day defined
+            date_factory.append(1)
+
+        try:
+            posts = self.posts.filter(**date_filter)
+        except ValueError:
+            # Invalid date filter
+            raise Http404
+
+        return render(request,
+                      self.template,
+                      {'self': self,
+                       'posts': self._paginate(request, posts),
+                       'filter_type': 'date',
+                       'filter_format': date_format,
+                       'filter': date(*date_factory)})
 
     def get_month_number(self, month):
         names = dict((v, k) for k, v in enumerate(calendar.month_name))

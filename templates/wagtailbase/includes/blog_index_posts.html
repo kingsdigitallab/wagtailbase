@@ -1,5 +1,4 @@
-{% if posts %}
-{% load pageurl %}
+{% load wagtailcore_tags %}
 
 <ul class="{{ class }}">
     {% for post in posts %}
@@ -12,4 +11,4 @@
 </ul>
 
 {% include "wagtailbase/includes/pagination.html" with pages=posts %}
-{% endif %}
+
