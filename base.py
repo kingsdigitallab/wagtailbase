@@ -3,7 +3,7 @@ from django.db.models.signals import post_init
 
 from django.http import Http404
 from django.core.urlresolvers import RegexURLResolver, Resolver404
-from django.conf.urls import url
+from django.template.loader import select_template
 
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
@@ -169,7 +169,6 @@ class BasePage(Page):
             raise e
 
     def serve(self, request, view=None, args=None, kwargs=None):
-
         args = args if args else []
         kwargs = kwargs if kwargs else {}
 
@@ -177,6 +176,22 @@ class BasePage(Page):
             return view(request, *args, **kwargs)
         else:
             return super(BasePage, self).serve(request, *args, **kwargs)
+
+    def get_template(self, request, *args, **kwargs):
+        """Checks if there is a template with the page path, and uses that
+        instead of using the generic page type template."""
+        page_template = '{}.html'.format(self.url.strip('/'))
+        logger.debug('get_template: page_template: {}'.format(page_template))
+
+        default_template = super(BasePage, self).get_template(request,
+                                                              *args, **kwargs)
+        logger.debug('get_template: default_template:{}'.format(
+            default_template))
+
+        template = select_template([page_template, default_template])
+
+        logger.debug('get_template: {}'.format(template.name))
+        return template.name
 
 
 def handle_page_post_init(sender, instance, **kwargs):

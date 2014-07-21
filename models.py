@@ -21,7 +21,7 @@ from modelcluster.tags import ClusterTaggableManager
 
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel)
-from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailcore.models import Orderable
 
 from wagtailbase.util import unslugify
 
@@ -48,7 +48,7 @@ class IndexPage(BaseIndexPage):
         except PageNotAnInteger:
             pages = paginator.page(1)
 
-        return render(request, self.template, {'self': self, 'pages': pages})
+        return render(request, self.get_template(request), {'self': self, 'pages': pages})
 
 
 class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
@@ -192,7 +192,7 @@ class BlogIndexPage(BaseIndexPage):
         posts = self.posts
 
         return render(request,
-                      self.template,
+                      self.get_template(request),
                       {'self': self,
                        'posts': self._paginate(request, posts)})
 
@@ -208,7 +208,7 @@ class BlogIndexPage(BaseIndexPage):
             models.Q(owner__username=unslugify(author)))
 
         return render(request,
-                      self.template,
+                      self.get_template(request),
                       {'self': self,
                        'posts': self._paginate(request, posts),
                        'filter_type': 'author',
@@ -225,7 +225,7 @@ class BlogIndexPage(BaseIndexPage):
             models.Q(tags__name=unslugify(tag)))
 
         return render(request,
-                      self.template,
+                      self.get_template(request),
                       {'self': self,
                        'posts': self._paginate(request, posts),
                        'filter_type': 'tag',
@@ -275,7 +275,7 @@ class BlogIndexPage(BaseIndexPage):
             raise Http404
 
         return render(request,
-                      self.template,
+                      self.get_template(request),
                       {'self': self,
                        'posts': self._paginate(request, posts),
                        'filter_type': 'date',
