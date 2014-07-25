@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
+    subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
 
     def serve(self, request):
         """Renders the children pages."""
@@ -74,6 +75,7 @@ IndexPage.promote_panels = [
 
 class RichTextPage(BaseRichTextPage):
     search_name = 'Rich Text Page'
+    subpage_types = []
 
 
 class RichTextPageRelatedLink(Orderable, AbstractRelatedLink):
@@ -101,6 +103,7 @@ RichTextPage.promote_panels = [
 
 class HomePage(BaseRichTextPage):
     search_name = 'Home Page'
+    subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
 
     class Meta:
         verbose_name = 'Homepage'
@@ -125,6 +128,8 @@ HomePage.promote_panels = [
 
 class BlogIndexPage(BaseIndexPage):
     search_name = 'Blog'
+
+    subpage_types = ['BlogPost']
 
     @property
     def posts(self):
@@ -328,6 +333,8 @@ class BlogPostTag(TaggedItemBase):
 class BlogPost(BaseRichTextPage):
     date = models.DateField('Post Date', default=date.today)
     tags = ClusterTaggableManager(through=BlogPostTag, blank=True)
+
+    subpage_types = []
 
     search_name = 'Blog post'
 
