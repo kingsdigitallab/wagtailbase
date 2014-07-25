@@ -98,6 +98,11 @@ class BasePage(Page):
 
     is_abstract = True
 
+    @classmethod
+    def register_subpage_type(cls, new_page_type):
+        """Registers a new kind of subpage that this page can be a parent """
+        cls.subpage_types = cls.subpage_types + [new_page_type]
+
     def is_current_or_ancestor(self, page):
         """Returns True if the given page is the current page or is an ancestor
         of the current page."""
