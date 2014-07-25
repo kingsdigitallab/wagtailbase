@@ -326,7 +326,7 @@ BlogIndexPage.promote_panels = [
 
 
 class BlogPostTag(TaggedItemBase):
-    content_object = ParentalKey('wagtailbase.BlogPost',
+    page = ParentalKey('wagtailbase.BlogPost',
                                  related_name='tagged_items')
 
 
