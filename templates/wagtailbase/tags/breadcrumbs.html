@@ -1,0 +1,17 @@
+{% load wagtailcore_tags wagtailbase_tags %}
+
+<ul class="breadcrumbs">
+    <li>
+        <a href="{% pageurl root %}">{{ root.title }}</a>
+    </li>
+
+    {% for page in pages %}
+    <li>
+        {% if forloop.last %}
+        {{ page.title }}
+        {% else %}
+        <a href="{% pageurl page %}">{{ page.title }}</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
