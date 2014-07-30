@@ -4,15 +4,11 @@ from base import (AbstractRelatedLink, AbstractAttachment,
 from datetime import date
 
 from django.db import models
-
 from django.conf import settings
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render
 from django.conf.urls import url
-import calendar
-
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
+from django.shortcuts import render
 
 from taggit.models import TaggedItemBase
 
@@ -25,31 +21,15 @@ from wagtail.wagtailcore.models import Orderable
 
 from wagtailbase.util import unslugify
 
-
+import calendar
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
     subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
-
-    def serve(self, request):
-        """Renders the children pages."""
-        pages = self.children
-
-        # Pagination
-        page = request.GET.get('page')
-        paginator = Paginator(pages, settings.ITEMS_PER_PAGE)
-
-        try:
-            pages = paginator.page(page)
-        except EmptyPage:
-            pages = paginator.page(paginator.num_pages)
-        except PageNotAnInteger:
-            pages = paginator.page(1)
-
-        return render(request, self.get_template(request), {'self': self, 'pages': pages})
 
 
 class IndexPageRelatedLink(Orderable, AbstractRelatedLink):

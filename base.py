@@ -2,7 +2,10 @@ from django.db import models
 from django.db.models.signals import post_init
 
 from django.http import Http404
+from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import RegexURLResolver, Resolver404
+from django.shortcuts import render
 from django.template.loader import select_template
 
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
@@ -15,13 +18,12 @@ from wagtail.wagtailcore.fields import RichTextField
 
 from wagtail.wagtailsearch import indexed
 
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 class AbstractLinkField(models.Model):
-
     """Abstract class for link fields."""
     link_document = models.ForeignKey('wagtaildocs.Document', blank=True,
                                       null=True, related_name='+')
@@ -49,7 +51,6 @@ class AbstractLinkField(models.Model):
 
 
 class AbstractRelatedLink(AbstractLinkField):
-
     """Abstract class for related links."""
     title = models.CharField(max_length=256, help_text='Link title')
 
@@ -85,7 +86,6 @@ class AbstractAttachment(AbstractLinkField):
 
 
 class BasePage(Page):
-
     """Abstract class Page. This class is not abstract to Django because
     it needs access to the manager. It will not appear in the Wagtail
     admin, however.
@@ -209,7 +209,6 @@ post_init.connect(handle_page_post_init)
 
 
 class BaseIndexPage(BasePage):
-
     """Base class for index pages. Index pages are pages that will have
     children pages."""
     introduction = RichTextField(blank=True)
@@ -225,9 +224,26 @@ class BaseIndexPage(BasePage):
         """Returns a list of the pages that are children of this page."""
         return self.get_children().filter(live=True)
 
+    def serve(self, request):
+        """Renders the children pages."""
+        pages = self.children
+
+        # Pagination
+        page = request.GET.get('page')
+        paginator = Paginator(pages, settings.ITEMS_PER_PAGE)
+
+        try:
+            pages = paginator.page(page)
+        except EmptyPage:
+            pages = paginator.page(paginator.num_pages)
+        except PageNotAnInteger:
+            pages = paginator.page(1)
+
+        return render(request, self.get_template(request),
+                      {'self': self, 'pages': pages})
+
 
 class BaseRichTextPage(BasePage):
-
     """Base class for rich text pages."""
     content = RichTextField()
 
