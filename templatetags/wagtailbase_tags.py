@@ -15,6 +15,19 @@ from wagtailbase.util import unslugify
 register = template.Library()
 
 
+@register.inclusion_tag('wagtailbase/tags/breadcrumbs.html',
+                        takes_context=True)
+def breadcrumbs(context, root, current_page):
+    """Returns the pages that are part of the breadcrumb trail of the current
+    page, up to the root page."""
+    print('current_page', current_page)
+    pages = current_page.get_ancestors(
+        inclusive=True).child_of(root).filter(live=True)
+
+    return {'request': context['request'], 'root': root,
+            'current_page': current_page, 'pages': pages}
+
+
 @register.assignment_tag(takes_context=False)
 def are_comments_allowed():
     """Returns True if commenting on the site is allowed, False otherwise."""
