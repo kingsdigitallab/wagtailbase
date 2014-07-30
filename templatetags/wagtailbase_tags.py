@@ -22,7 +22,7 @@ def breadcrumbs(context, root, current_page):
     page, up to the root page."""
     print('current_page', current_page)
     pages = current_page.get_ancestors(
-        inclusive=True).child_of(root).filter(live=True)
+        inclusive=True).descendant_of(root).filter(live=True)
 
     return {'request': context['request'], 'root': root,
             'current_page': current_page, 'pages': pages}
