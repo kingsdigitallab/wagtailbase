@@ -1,4 +1,4 @@
-from ..models import BlogPost
+from ..models import BlogPost, HomePage
 
 from django import template
 from django.conf import settings
@@ -105,6 +105,7 @@ def local_menu(context, current_page=None):
     """Retrieves the secondary links for the 'also in this section' links -
     either the children or siblings of the current page."""
     menu_pages = []
+    label = current_page.title
 
     if current_page:
         menu_pages = current_page.get_children().filter(
@@ -115,9 +116,13 @@ def local_menu(context, current_page=None):
             menu_pages = current_page.get_siblings().filter(
                 live=True, show_in_menus=True)
 
+        if current_page.get_children_count() == 0:
+            if not isinstance(current_page.get_parent().specific, HomePage):
+                label = current_page.get_parent().title
+
     # required by the pageurl tag that we want to use within this template
     return {'request': context['request'], 'current_page': current_page,
-            'menu_pages': menu_pages}
+            'menu_pages': menu_pages, 'menu_label': label}
 
 
 @register.inclusion_tag('wagtailbase/tags/main_menu.html', takes_context=True)
