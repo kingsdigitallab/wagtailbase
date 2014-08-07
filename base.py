@@ -137,10 +137,10 @@ class BasePage(Page):
         """
         This finds a view method/function from a URL path.
         """
-        logging.debug('resolving subpage with path `{}`'.format(path))
-        logging.debug('urls `{}`'.format(self.get_subpage_urls()))
+        logging.debug('resolving subpage with path `{0}`'.format(path))
+        logging.debug('urls `{0}`'.format(self.get_subpage_urls()))
         resolver = RegexURLResolver(r'^', self.get_subpage_urls())
-        logging.debug('resolved to `{}`'.format(resolver))
+        logging.debug('resolved to `{0}`'.format(resolver))
         return resolver.resolve(path)
 
     def route(self, request, path_components):
@@ -148,7 +148,7 @@ class BasePage(Page):
         This hooks the subpage urls into Wagtails routing.
         """
 
-        logging.debug('{} route with {}'.format(self, path_components))
+        logging.debug('{0} route with {1}'.format(self, path_components))
 
         try:
             route_result = super(BasePage, self).route(
@@ -185,17 +185,17 @@ class BasePage(Page):
     def get_template(self, request, *args, **kwargs):
         """Checks if there is a template with the page path, and uses that
         instead of using the generic page type template."""
-        page_template = '{}.html'.format(self.url.strip('/'))
-        logger.debug('get_template: page_template: {}'.format(page_template))
+        page_template = '{0}.html'.format(self.url.strip('/'))
+        logger.debug('get_template: page_template: {0}'.format(page_template))
 
         default_template = super(BasePage, self).get_template(request,
                                                               *args, **kwargs)
-        logger.debug('get_template: default_template:{}'.format(
+        logger.debug('get_template: default_template:{0}'.format(
             default_template))
 
         template = select_template([page_template, default_template])
 
-        logger.debug('get_template: {}'.format(template.name))
+        logger.debug('get_template: {0}'.format(template.name))
         return template.name
 
 
