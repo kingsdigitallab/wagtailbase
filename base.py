@@ -224,7 +224,14 @@ class BaseIndexPage(BasePage):
         """Returns a list of the pages that are children of this page."""
         return self.get_children().filter(live=True)
 
-    def serve(self, request):
+    def get_subpage_urls(self):
+        return [
+            url(r'^$',
+                self.serve_listing,
+                name='main')
+            ]
+
+    def serve_listing(self, request):
         """Renders the children pages."""
         pages = self.children
 
