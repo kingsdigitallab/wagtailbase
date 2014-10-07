@@ -17,14 +17,14 @@ register = template.Library()
 
 @register.inclusion_tag('wagtailbase/tags/breadcrumbs.html',
                         takes_context=True)
-def breadcrumbs(context, root, current_page):
+def breadcrumbs(context, root, current_page, extra=None):
     """Returns the pages that are part of the breadcrumb trail of the current
     page, up to the root page."""
     pages = current_page.get_ancestors(
         inclusive=True).descendant_of(root).filter(live=True)
 
     return {'request': context['request'], 'root': root,
-            'current_page': current_page, 'pages': pages}
+            'current_page': current_page, 'pages': pages, 'extra': extra}
 
 
 @register.assignment_tag(takes_context=False)
