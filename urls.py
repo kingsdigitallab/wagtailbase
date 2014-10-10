@@ -6,7 +6,7 @@ from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailsearch.urls import frontend as wagtailsearch_frontend_urls
 
 # Signal handlers
-from wagtail.wagtailsearch import register_signal_handlers as \
+from wagtail.wagtailsearch.signal_handlers import register_signal_handlers as \
     wagtailsearch_register_signal_handlers
 wagtailsearch_register_signal_handlers()
 
