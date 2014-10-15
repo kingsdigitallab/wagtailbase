@@ -8,12 +8,16 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import RegexURLResolver, Resolver404
 from django.shortcuts import render
 from django.template.loader import select_template
+from django.template.response import TemplateResponse
 
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailcore.models import Page
+
+from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin
+
 from wagtail.wagtailcore.url_routing import RouteResult
 from wagtail.wagtailcore.fields import RichTextField
 
@@ -25,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 class AbstractLinkField(models.Model):
+
     """Abstract class for link fields."""
     link_document = models.ForeignKey('wagtaildocs.Document', blank=True,
                                       null=True, related_name='+')
@@ -52,6 +57,7 @@ class AbstractLinkField(models.Model):
 
 
 class AbstractRelatedLink(AbstractLinkField):
+
     """Abstract class for related links."""
     title = models.CharField(max_length=256, help_text='Link title')
 
@@ -86,7 +92,8 @@ class AbstractAttachment(AbstractLinkField):
         abstract = True
 
 
-class BasePage(Page):
+class BasePage(RoutablePageMixin, Page):
+
     """Abstract class Page. This class is not abstract to Django because
     it needs access to the manager. It will not appear in the Wagtail
     admin, however.
@@ -98,6 +105,8 @@ class BasePage(Page):
     All pages in wagtailbase inherit from this class."""
 
     is_abstract = True
+
+    subpage_urls = (url(r'^$', 'serve', name='serve'),)
 
     @classmethod
     def register_subpage_type(cls, new_page_type):
@@ -120,68 +129,18 @@ class BasePage(Page):
 
         return False
 
-    def get_subpage_urls(self):
-        """
-        Override this method to add your own subpage urls
-        """
-        return []
-
-    def reverse_subpage(self, name, *args, **kwargs):
-        """
-        This method does the same job as Djangos' built in
-        "urlresolvers.reverse()" function for subpage urlconfs.
-        """
-        resolver = RegexURLResolver(r'^', self.get_subpage_urls())
-        return self.url + resolver.reverse(name, *args, **kwargs)
-
-    def resolve_subpage(self, path):
-        """
-        This finds a view method/function from a URL path.
-        """
-        logging.debug('resolving subpage with path `{0}`'.format(path))
-        logging.debug('urls `{0}`'.format(self.get_subpage_urls()))
-        resolver = RegexURLResolver(r'^', self.get_subpage_urls())
-        logging.debug('resolved to `{0}`'.format(resolver))
-        return resolver.resolve(path)
-
-    def route(self, request, path_components):
-        """
-        This hooks the subpage urls into Wagtails routing.
-        """
-
-        logging.debug('{0} route with {1}'.format(self, path_components))
-
-        try:
-            route_result = super(BasePage, self).route(
-                request, path_components)
-
-            # Don't allow supers route method to serve this page
-            if route_result.page == self:
-                raise Http404
-
-            return route_result
-        except Http404 as e:
-            if self.live:
-                try:
-                    path = '/'.join(path_components)
-                    if path:
-                        path += '/'
-
-                    return RouteResult(self, self.resolve_subpage(path))
-                except Resolver404:
-                    return RouteResult(self)
-
-            # Reraise
-            raise e
-
     def serve(self, request, view=None, args=None, kwargs=None):
         args = args if args else []
         kwargs = kwargs if kwargs else {}
 
         if view:
-            return view(request, *args, **kwargs)
+            return super(BasePage, self).serve(request, view, args, kwargs)
         else:
-            return super(BasePage, self).serve(request, *args, **kwargs)
+            return TemplateResponse(
+                request,
+                self.get_template(request, *args, **kwargs),
+                self.get_context(request, *args, **kwargs)
+            )
 
     def get_template(self, request, *args, **kwargs):
         """Checks if there is a template with the page path, and uses that
@@ -210,27 +169,25 @@ post_init.connect(handle_page_post_init)
 
 
 class BaseIndexPage(BasePage):
+
     """Base class for index pages. Index pages are pages that will have
     children pages."""
     introduction = RichTextField(blank=True)
 
-    search_fields = Page.search_fields + ( # Inherit search_fields from Page
+    search_fields = Page.search_fields + (  # Inherit search_fields from Page
         indexed.SearchField('introduction'),
     )
 
     is_abstract = True
 
+    subpage_urls = (
+        url(r'^$', 'serve_listing', name='serve_listing')
+    )
+
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
         return self.get_children().filter(live=True)
-
-    def get_subpage_urls(self):
-        return [
-            url(r'^$',
-                self.serve_listing,
-                name='main')
-            ]
 
     def serve_listing(self, request):
         """Renders the children pages."""
@@ -252,10 +209,11 @@ class BaseIndexPage(BasePage):
 
 
 class BaseRichTextPage(BasePage):
+
     """Base class for rich text pages."""
     content = RichTextField()
 
-    search_fields = Page.search_fields + ( # Inherit search_fields from Page
+    search_fields = Page.search_fields + (  # Inherit search_fields from Page
         indexed.SearchField('content'),
     )
     is_abstract = True

@@ -111,6 +111,36 @@ class BlogIndexPage(BaseIndexPage):
 
     subpage_types = ['BlogPost']
 
+    subpage_urls = (
+        url(r'^$',
+            'serve_listing',
+            name='serve_listing'),
+
+        url(r'^author/(?P<author>[\w ]+)/$',
+            'serve_by_author',
+            name='serve_by_author'),
+
+        url(r'^tag/(?P<tag>[\w ]+)/$',
+            'serve_by_tag',
+            name='serve_by_tag'),
+
+        url((r'^date'
+             r'/(?P<year>\d{4})'
+             r'/$'),
+            'serve_by_date', name='serve_by_date'),
+        url((r'^date'
+             r'/(?P<year>\d{4})'
+             r'/(?P<month>(?:\w+|\d{1,2}))'
+             r'/$'),
+            'serve_by_date', name='serve_by_date'),
+        url((r'^date'
+             r'/(?P<year>\d{4})'
+             r'/(?P<month>(?:\w+|\d{1,2}))'
+             r'/(?P<day>\d{1,2})'
+             r'/$'),
+            'serve_by_date', name='serve_by_date'),
+    )
+
     @property
     def posts(self):
         """Returns a list of the blog posts that are children of this page."""
@@ -124,37 +154,6 @@ class BlogIndexPage(BaseIndexPage):
                          for d in dates])
 
         return sorted(new_dates, reverse=True)
-
-    def get_subpage_urls(self):
-        return [
-            url(r'^$',
-                self.serve_listing,
-                name='main'),
-
-            url(r'^author/(?P<author>[\w ]+)/$',
-                self.serve_by_author,
-                name='by_author'),
-
-            url(r'^tag/(?P<tag>[\w ]+)/$',
-                self.serve_by_tag,
-                name='by_tag'),
-
-            url((r'^date'
-                 r'/(?P<year>\d{4})'
-                 r'/$'),
-                self.serve_by_date, name='by_date'),
-            url((r'^date'
-                 r'/(?P<year>\d{4})'
-                 r'/(?P<month>(?:\w+|\d{1,2}))'
-                 r'/$'),
-                self.serve_by_date, name='by_date'),
-            url((r'^date'
-                 r'/(?P<year>\d{4})'
-                 r'/(?P<month>(?:\w+|\d{1,2}))'
-                 r'/(?P<day>\d{1,2})'
-                 r'/$'),
-                self.serve_by_date, name='by_date'),
-        ]
 
     def _paginate(self, request, posts):
         """ Paginate posts """
