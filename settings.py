@@ -21,6 +21,7 @@ INSTALLED_APPS = (
     'wagtail.wagtailembeds',
     'wagtail.wagtailsearch',
     'wagtail.wagtailredirects',
+    'wagtail.contrib.wagtailroutablepage',
 )
 
 MIDDLEWARE_CLASSES = (

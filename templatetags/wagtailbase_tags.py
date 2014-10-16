@@ -9,8 +9,12 @@ from django.template.defaultfilters import stringfilter
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.templatetags.wagtailcore_tags import pageurl
 
+from wagtail.contrib.wagtailroutablepage.templatetags.wagtailroutablepage_tags import routablepageurl
+
 from wagtailbase.util import unslugify
 
+import logging
+logger = logging.getLogger(__name__)
 
 register = template.Library()
 
@@ -148,23 +152,38 @@ def slugurl(context, slug):
 
 @register.simple_tag(takes_context=True)
 def archiveurl(context, page, *args):
-    """Returns the URL for the page that has the given slug."""
-    archive_url = []
+    """[DEPRECATED] Returns the URL for the page that has the given slug.
+        Use routablepageurl from wagtail.contrib.wagtailroutablepage templatetag
+        instead.
+
+        for example:
+        `{% archiveurl page author %}`
+
+        should be:
+        `{% routablepageurl page 'author' author %}`
+    """
+
+    logger.warning(
+        ('DEPRECATED: wagtailbase tag archiveurl is depracated. '
+         'Use routablepageurl from wagtail.contrib.wagtailroutablepage '
+         'templatetag instead.'))
 
     try:
-        # is author
-        archive_url += ['author', slugify(args[0].username)]
+        url_name = 'author'
+        a_args = [slugify(args[0].username)]
     except AttributeError:
         try:
-            # is tag
-            archive_url += ['tag', slugify(args[0].name)]
+            url_name = 'tag'
+            a_args = [slugify(args[0].name)]
         except AttributeError:
-            # date
-            archive_url += ['date'] + [str(arg) for arg in args]
-    except IndexError:
-        archive_url = []
+            url_name = 'date'
+            a_args = args
 
-    return pageurl(context, page) + '/'.join(archive_url)
+    except IndexError:
+        url_name = ''
+        a_args = []
+
+    return routablepageurl(context, page.specific, url_name, *a_args)
 
 
 @register.filter(name="unslugify")

@@ -111,6 +111,36 @@ class BlogIndexPage(BaseIndexPage):
 
     subpage_types = ['BlogPost']
 
+    subpage_urls = (
+        url(r'^$',
+            'main',
+            name='main'),
+
+        url(r'^author/(?P<author>[\w ]+)/$',
+            'author',
+            name='author'),
+
+        url(r'^tag/(?P<tag>[\w ]+)/$',
+            'tag',
+            name='tag'),
+
+        url((r'^date'
+             r'/(?P<year>\d{4})'
+             r'/$'),
+            'date', name='date'),
+        url((r'^date'
+             r'/(?P<year>\d{4})'
+             r'/(?P<month>(?:\w+|\d{1,2}))'
+             r'/$'),
+            'date', name='date'),
+        url((r'^date'
+             r'/(?P<year>\d{4})'
+             r'/(?P<month>(?:\w+|\d{1,2}))'
+             r'/(?P<day>\d{1,2})'
+             r'/$'),
+            'date', name='date'),
+    )
+
     @property
     def posts(self):
         """Returns a list of the blog posts that are children of this page."""
@@ -124,37 +154,6 @@ class BlogIndexPage(BaseIndexPage):
                          for d in dates])
 
         return sorted(new_dates, reverse=True)
-
-    def get_subpage_urls(self):
-        return [
-            url(r'^$',
-                self.serve_listing,
-                name='main'),
-
-            url(r'^author/(?P<author>[\w ]+)/$',
-                self.serve_by_author,
-                name='by_author'),
-
-            url(r'^tag/(?P<tag>[\w ]+)/$',
-                self.serve_by_tag,
-                name='by_tag'),
-
-            url((r'^date'
-                 r'/(?P<year>\d{4})'
-                 r'/$'),
-                self.serve_by_date, name='by_date'),
-            url((r'^date'
-                 r'/(?P<year>\d{4})'
-                 r'/(?P<month>(?:\w+|\d{1,2}))'
-                 r'/$'),
-                self.serve_by_date, name='by_date'),
-            url((r'^date'
-                 r'/(?P<year>\d{4})'
-                 r'/(?P<month>(?:\w+|\d{1,2}))'
-                 r'/(?P<day>\d{1,2})'
-                 r'/$'),
-                self.serve_by_date, name='by_date'),
-        ]
 
     def _paginate(self, request, posts):
         """ Paginate posts """
@@ -172,7 +171,7 @@ class BlogIndexPage(BaseIndexPage):
 
         return posts
 
-    def serve_listing(self, request):
+    def main(self, request):
         """main listing"""
         posts = self.posts
 
@@ -181,7 +180,7 @@ class BlogIndexPage(BaseIndexPage):
                       {'self': self,
                        'posts': self._paginate(request, posts)})
 
-    def serve_by_author(self, request, author=None):
+    def author(self, request, author=None):
         """listing of posts by a specific author"""
 
         if not author:
@@ -199,7 +198,7 @@ class BlogIndexPage(BaseIndexPage):
                        'filter_type': 'author',
                        'filter': author})
 
-    def serve_by_tag(self, request, tag=None):
+    def tag(self, request, tag=None):
         """listing of posts in a specific tag"""
         if not tag:
             # Invalid tag filter
@@ -216,7 +215,7 @@ class BlogIndexPage(BaseIndexPage):
                        'filter_type': 'tag',
                        'filter': tag})
 
-    def serve_by_date(self, request, year=None, month=None, day=None):
+    def date(self, request, year=None, month=None, day=None):
         """listing of posts published within a specific year, month, or date"""
 
         if not year:
