@@ -113,32 +113,32 @@ class BlogIndexPage(BaseIndexPage):
 
     subpage_urls = (
         url(r'^$',
-            'serve_listing',
-            name='serve_listing'),
+            'main',
+            name='main'),
 
         url(r'^author/(?P<author>[\w ]+)/$',
-            'serve_by_author',
-            name='serve_by_author'),
+            'author',
+            name='author'),
 
         url(r'^tag/(?P<tag>[\w ]+)/$',
-            'serve_by_tag',
-            name='serve_by_tag'),
+            'tag',
+            name='tag'),
 
         url((r'^date'
              r'/(?P<year>\d{4})'
              r'/$'),
-            'serve_by_date', name='serve_by_date'),
+            'date', name='date'),
         url((r'^date'
              r'/(?P<year>\d{4})'
              r'/(?P<month>(?:\w+|\d{1,2}))'
              r'/$'),
-            'serve_by_date', name='serve_by_date'),
+            'date', name='date'),
         url((r'^date'
              r'/(?P<year>\d{4})'
              r'/(?P<month>(?:\w+|\d{1,2}))'
              r'/(?P<day>\d{1,2})'
              r'/$'),
-            'serve_by_date', name='serve_by_date'),
+            'date', name='date'),
     )
 
     @property
@@ -171,7 +171,7 @@ class BlogIndexPage(BaseIndexPage):
 
         return posts
 
-    def serve_listing(self, request):
+    def main(self, request):
         """main listing"""
         posts = self.posts
 
@@ -180,7 +180,7 @@ class BlogIndexPage(BaseIndexPage):
                       {'self': self,
                        'posts': self._paginate(request, posts)})
 
-    def serve_by_author(self, request, author=None):
+    def author(self, request, author=None):
         """listing of posts by a specific author"""
 
         if not author:
@@ -198,7 +198,7 @@ class BlogIndexPage(BaseIndexPage):
                        'filter_type': 'author',
                        'filter': author})
 
-    def serve_by_tag(self, request, tag=None):
+    def tag(self, request, tag=None):
         """listing of posts in a specific tag"""
         if not tag:
             # Invalid tag filter
@@ -215,7 +215,7 @@ class BlogIndexPage(BaseIndexPage):
                        'filter_type': 'tag',
                        'filter': tag})
 
-    def serve_by_date(self, request, year=None, month=None, day=None):
+    def date(self, request, year=None, month=None, day=None):
         """listing of posts published within a specific year, month, or date"""
 
         if not year:
