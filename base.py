@@ -130,6 +130,13 @@ class BasePage(RoutablePageMixin, Page):
         return False
 
     def serve(self, request, view=None, args=None, kwargs=None):
+        """
+        This method is not necessary if this pull request is accepted:
+        https://github.com/torchbox/wagtail/pull/708
+
+        TODO: Delete or ammend as necessary
+        """
+
         args = args if args else []
         kwargs = kwargs if kwargs else {}
 
