@@ -1,5 +1,5 @@
 {% if post %}
-{% load wagtailcore_tags wagtailbase_tags %}
+{% load wagtailcore_tags wagtailbase_tags wagtailroutablepage_tags %}
 
 <article class="post" id="post{{ post.id }}">
     <header>
@@ -8,7 +8,7 @@
         {% endblock %}
 
         {% block blog_post_author %}
-        <p class="byline">by <a href="{% archiveurl post.blog_index post.owner %}">{{ post.owner|unslugify }}</a>
+        <p class="byline">by <a href="{% routablepageurl post.blog_index.specific 'author' post.owner %}">{{ post.owner|unslugify }}</a>
             <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
 
             {% are_comments_allowed as allow_comments %}
@@ -35,7 +35,7 @@
         <ul class="tags">
             {% for tag in tags %}
             <li class="tag">
-                <a href="{% archiveurl post.blog_index tag %}">{{ tag|unslugify }}</a>
+                <a href="{% routablepageurl post.blog_index.specific 'tag' tag %}">{{ tag|unslugify }}</a>
             </li>
             {% endfor %}
         </ul>
