@@ -73,6 +73,11 @@ def has_local_menu(context, current_page):
     page."""
     site_root = get_site_root(context)
 
+    try:
+        current_page.id
+    except AttributeError:
+        return False;
+
     if current_page.id != site_root.id:
         if current_page.depth <= 4 and not current_page.is_leaf():
             return True
