@@ -1,11 +1,10 @@
-from django.conf.urls import url
 from django.db import models
 from django.db.models.signals import post_init
 
 from django.http import Http404
 from django.conf import settings
+from django.conf.urls import url
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import RegexURLResolver, Resolver404
 from django.shortcuts import render
 from django.template.loader import select_template
 from django.template.response import TemplateResponse
@@ -106,7 +105,9 @@ class BasePage(RoutablePageMixin, Page):
 
     is_abstract = True
 
-    subpage_urls = (url(r'^$', 'serve', name='serve'),)
+    subpage_urls = (
+        url(r'^$', 'serve', name='serve'),
+    )
 
     @classmethod
     def register_subpage_type(cls, new_page_type):
@@ -188,7 +189,7 @@ class BaseIndexPage(BasePage):
     is_abstract = True
 
     subpage_urls = (
-        url(r'^$', 'serve_listing', name='serve_listing')
+        url(r'^$', 'serve_listing', name='serve_listing'),
     )
 
     @property
