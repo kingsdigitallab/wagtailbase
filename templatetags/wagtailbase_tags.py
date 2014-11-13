@@ -108,6 +108,19 @@ def latest_blog_post(context, parent=None):
 
     return {'request': context['request'], 'post': post}
 
+@register.inclusion_tag('wagtailbase/tags/featured_blog_post.html',
+                        takes_context=True)
+def featured_blog_post(context, parent=None):
+    """Returns the latest featured blog post that is child of the given parent.
+    If no parent is given it defaults to the latest featured BlogPost object."""
+    post = None
+    if parent:
+        post = parent.posts.filter(featured=True).order_by('-date').first()
+    else:
+        post = BlogPost.objects.filter(featured=True).order_by('-date').first()
+
+    return {'request': context['request'], 'post': post}
+
 
 @register.inclusion_tag('wagtailbase/tags/local_menu.html', takes_context=True)
 def local_menu(context, current_page=None):

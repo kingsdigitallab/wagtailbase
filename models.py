@@ -21,6 +21,8 @@ from wagtail.wagtailcore.models import Orderable
 
 from wagtailbase.util import unslugify
 
+from wagtail.wagtailsearch import index
+
 import calendar
 import logging
 
@@ -312,10 +314,16 @@ class BlogPostTag(TaggedItemBase):
 class BlogPost(BaseRichTextPage):
     date = models.DateField('Post Date', default=date.today)
     tags = ClusterTaggableManager(through=BlogPostTag, blank=True)
+    featured = models.BooleanField(default=False, help_text="Feature this post")
 
     subpage_types = []
 
     search_name = 'Blog post'
+
+    search_fields = BaseRichTextPage.search_fields + (
+        index.FilterField('date'),
+        index.FilterField('featured'),
+    )
 
     @property
     def blog_index(self):
@@ -348,6 +356,7 @@ BlogPost.content_panels = [
 
 BlogPost.promote_panels = [
     FieldPanel('tags'),
+    FieldPanel('featured'),
     MultiFieldPanel(BaseRichTextPage.promote_panels,
                     "Common page configuration"),
 ]
