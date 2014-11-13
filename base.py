@@ -20,7 +20,7 @@ from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin
 from wagtail.wagtailcore.url_routing import RouteResult
 from wagtail.wagtailcore.fields import RichTextField
 
-from wagtail.wagtailsearch import indexed
+from wagtail.wagtailsearch import index
 
 import logging
 
@@ -183,7 +183,7 @@ class BaseIndexPage(BasePage):
     introduction = RichTextField(blank=True)
 
     search_fields = Page.search_fields + (  # Inherit search_fields from Page
-        indexed.SearchField('introduction'),
+        index.SearchField('introduction'),
     )
 
     is_abstract = True
@@ -222,7 +222,7 @@ class BaseRichTextPage(BasePage):
     content = RichTextField()
 
     search_fields = Page.search_fields + (  # Inherit search_fields from Page
-        indexed.SearchField('content'),
+        index.SearchField('content'),
     )
     is_abstract = True
 
