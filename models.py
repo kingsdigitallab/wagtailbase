@@ -18,7 +18,7 @@ from modelcluster.tags import ClusterTaggableManager
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel)
 from wagtail.wagtailcore.models import Orderable
-
+from wagtail.contrib.wagtailroutablepage.models import route
 from wagtailbase.util import unslugify
 
 from wagtail.wagtailsearch import index
@@ -113,36 +113,6 @@ class BlogIndexPage(BaseIndexPage):
 
     subpage_types = ['BlogPost']
 
-    subpage_urls = (
-        url(r'^$',
-            'main',
-            name='main'),
-
-        url(r'^author/(?P<author>[\w ]+)/$',
-            'author',
-            name='author'),
-
-        url(r'^tag/(?P<tag>[\w ]+)/$',
-            'tag',
-            name='tag'),
-
-        url((r'^date'
-             r'/(?P<year>\d{4})'
-             r'/$'),
-            'date', name='date'),
-        url((r'^date'
-             r'/(?P<year>\d{4})'
-             r'/(?P<month>(?:\w+|\d{1,2}))'
-             r'/$'),
-            'date', name='date'),
-        url((r'^date'
-             r'/(?P<year>\d{4})'
-             r'/(?P<month>(?:\w+|\d{1,2}))'
-             r'/(?P<day>\d{1,2})'
-             r'/$'),
-            'date', name='date'),
-    )
-
     @property
     def posts(self):
         """Returns a list of the blog posts that are children of this page."""
@@ -173,7 +143,8 @@ class BlogIndexPage(BaseIndexPage):
 
         return posts
 
-    def main(self, request):
+    @route(r'^$')
+    def serve_listing(self, request):
         """main listing"""
         posts = self.posts
 
@@ -182,6 +153,7 @@ class BlogIndexPage(BaseIndexPage):
                       {'self': self,
                        'posts': self._paginate(request, posts)})
 
+    @route(r'^author/(?P<author>[\w ]+)/$')
     def author(self, request, author=None):
         """listing of posts by a specific author"""
 
@@ -200,6 +172,7 @@ class BlogIndexPage(BaseIndexPage):
                        'filter_type': 'author',
                        'filter': author})
 
+    @route(r'^tag/(?P<tag>[\w ]+)/$')
     def tag(self, request, tag=None):
         """listing of posts in a specific tag"""
         if not tag:
@@ -217,6 +190,18 @@ class BlogIndexPage(BaseIndexPage):
                        'filter_type': 'tag',
                        'filter': tag})
 
+    @route((r'^date'
+            r'/(?P<year>\d{4})'
+            r'/$'))
+    @route((r'^date'
+            r'/(?P<year>\d{4})'
+            r'/(?P<month>(?:\w+|\d{1,2}))'
+            r'/$'))
+    @route((r'^date'
+            r'/(?P<year>\d{4})'
+            r'/(?P<month>(?:\w+|\d{1,2}))'
+            r'/(?P<day>\d{1,2})'
+            r'/$'))
     def date(self, request, year=None, month=None, day=None):
         """listing of posts published within a specific year, month, or date"""
 
@@ -314,7 +299,8 @@ class BlogPostTag(TaggedItemBase):
 class BlogPost(BaseRichTextPage):
     date = models.DateField('Post Date', default=date.today)
     tags = ClusterTaggableManager(through=BlogPostTag, blank=True)
-    featured = models.BooleanField(default=False, help_text="Feature this post")
+    featured = models.BooleanField(
+        default=False, help_text="Feature this post")
 
     subpage_types = []
 

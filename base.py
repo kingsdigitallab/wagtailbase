@@ -15,7 +15,7 @@ from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailcore.models import Page
 
-from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin
+from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin, route
 
 from wagtail.wagtailcore.url_routing import RouteResult
 from wagtail.wagtailcore.fields import RichTextField
@@ -91,7 +91,7 @@ class AbstractAttachment(AbstractLinkField):
         abstract = True
 
 
-class BasePage(RoutablePageMixin, Page):
+class BasePage(Page):
 
     """Abstract class Page. This class is not abstract to Django because
     it needs access to the manager. It will not appear in the Wagtail
@@ -104,10 +104,6 @@ class BasePage(RoutablePageMixin, Page):
     All pages in wagtailbase inherit from this class."""
 
     is_abstract = True
-
-    subpage_urls = (
-        url(r'^$', 'serve', name='serve'),
-    )
 
     @classmethod
     def register_subpage_type(cls, new_page_type):
@@ -130,32 +126,11 @@ class BasePage(RoutablePageMixin, Page):
 
         return False
 
-    def serve(self, request, view=None, args=None, kwargs=None):
-        """
-        This method is not necessary if this pull request is accepted:
-        https://github.com/torchbox/wagtail/pull/708
-
-        TODO: Delete or ammend as necessary
-        """
-
-        args = args if args else []
-        kwargs = kwargs if kwargs else {}
-
-        if view:
-            return super(BasePage, self).serve(request, view, args, kwargs)
-        else:
-            return TemplateResponse(
-                request,
-                self.get_template(request, *args, **kwargs),
-                self.get_context(request, *args, **kwargs)
-            )
-
     def get_template(self, request, *args, **kwargs):
         """Checks if there is a template with the page path, and uses that
         instead of using the generic page type template."""
         page_template = '{0}.html'.format(self.url.strip('/'))
         logger.debug('get_template: page_template: {0}'.format(page_template))
-
         default_template = super(BasePage, self).get_template(request,
                                                               *args, **kwargs)
         logger.debug('get_template: default_template:{0}'.format(
@@ -163,8 +138,10 @@ class BasePage(RoutablePageMixin, Page):
 
         template = select_template([page_template, default_template])
 
-        logger.debug('get_template: {0}'.format(template.name))
-        return template.name
+        print template.template.name
+
+        logger.debug('get_template: {0}'.format(template.template.name))
+        return template.template.name
 
 
 def handle_page_post_init(sender, instance, **kwargs):
@@ -176,7 +153,7 @@ def handle_page_post_init(sender, instance, **kwargs):
 post_init.connect(handle_page_post_init)
 
 
-class BaseIndexPage(BasePage):
+class BaseIndexPage(RoutablePageMixin, BasePage):
 
     """Base class for index pages. Index pages are pages that will have
     children pages."""
@@ -188,15 +165,12 @@ class BaseIndexPage(BasePage):
 
     is_abstract = True
 
-    subpage_urls = (
-        url(r'^$', 'serve_listing', name='serve_listing'),
-    )
-
     @property
     def children(self):
         """Returns a list of the pages that are children of this page."""
         return self.get_children().filter(live=True)
 
+    @route(r'^$')
     def serve_listing(self, request):
         """Renders the children pages."""
         pages = self.children
