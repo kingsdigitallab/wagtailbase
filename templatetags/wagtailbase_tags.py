@@ -122,6 +122,26 @@ def featured_blog_post(context, parent=None):
     return {'request': context['request'], 'post': post}
 
 
+@register.inclusion_tag('wagtailbase/tags/latest_n_blog_posts.html',
+                        takes_context=True)
+def latest_n_blog_posts(context, nentries, parent=None):
+    """Returns an array with the latest blog posts that are children of the
+    given parent. The number of blog posts is specified in nentries. If
+    there are not enough blog posts, it returns all the existing entries.
+    If no parent is given it defaults to the latest BlogPost object."""
+
+    posts = []
+    base_model = BlogPost
+
+    if parent:
+        base_model = parent
+
+    posts = base_model.objects.all().order_by('-date')[0:nentries]
+
+    return {'request': context['request'], 'posts': posts}
+
+
+
 @register.inclusion_tag('wagtailbase/tags/local_menu.html', takes_context=True)
 def local_menu(context, current_page=None):
     """Retrieves the secondary links for the 'also in this section' links -
