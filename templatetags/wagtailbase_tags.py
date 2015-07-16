@@ -93,9 +93,9 @@ def latest_blog_post(context, parent=None):
     post = None
 
     if parent:
-        post = parent.get_children().order_by('-date').first()
+        post = parent.posts.order_by('-date').first()
     else:
-        post = BlogPost.objects.all().order_by('-date').first()
+        post = BlogPost.objects.filter(live=True).order_by('-date').first()
 
     return {'request': context['request'], 'post': post}
 
