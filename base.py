@@ -1,13 +1,10 @@
 from django.db import models
 from django.db.models.signals import post_init
 
-from django.http import Http404
 from django.conf import settings
-from django.conf.urls import url
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.template.loader import select_template
-from django.template.response import TemplateResponse
 
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
@@ -17,7 +14,6 @@ from wagtail.wagtailcore.models import Page
 
 from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin, route
 
-from wagtail.wagtailcore.url_routing import RouteResult
 from wagtail.wagtailcore.fields import RichTextField
 
 from wagtail.wagtailsearch import index
