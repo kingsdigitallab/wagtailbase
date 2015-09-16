@@ -76,7 +76,7 @@ def has_local_menu(context, current_page):
     try:
         current_page.id
     except AttributeError:
-        return False;
+        return False
 
     if current_page.id != site_root.id:
         if current_page.depth <= 4 and not current_page.is_leaf():
@@ -108,6 +108,7 @@ def latest_blog_post(context, parent=None):
 
     return {'request': context['request'], 'post': post}
 
+
 @register.inclusion_tag('wagtailbase/tags/featured_blog_post.html',
                         takes_context=True)
 def featured_blog_post(context, parent=None):
@@ -120,6 +121,25 @@ def featured_blog_post(context, parent=None):
         post = BlogPost.objects.filter(featured=True).order_by('-date').first()
 
     return {'request': context['request'], 'post': post}
+
+
+@register.inclusion_tag('wagtailbase/tags/latest_n_blog_posts.html',
+                        takes_context=True)
+def latest_n_blog_posts(context, nentries, parent=None):
+    """Returns an array with the latest blog posts that are children of the
+    given parent. The number of blog posts is specified in nentries. If
+    there are not enough blog posts, it returns all the existing entries.
+    If no parent is given it defaults to the latest BlogPost object."""
+
+    posts = []
+    base_model = BlogPost
+
+    if parent:
+        base_model = parent
+
+    posts = base_model.objects.all().order_by('-date')[0:nentries]
+
+    return {'request': context['request'], 'posts': posts}
 
 
 @register.inclusion_tag('wagtailbase/tags/local_menu.html', takes_context=True)
@@ -208,3 +228,8 @@ def archiveurl(context, page, *args):
 @stringfilter
 def unslugify_filter(value):
     return unslugify(value)
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary[key]
