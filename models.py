@@ -46,8 +46,8 @@ class IndexPageAttachment(Orderable, AbstractAttachment):
 IndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(IndexPage, 'related_links', label='Related links'),
-    InlinePanel(IndexPage, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 IndexPage.promote_panels = [
@@ -73,8 +73,8 @@ class RichTextAttachment(Orderable, AbstractAttachment):
 RichTextPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('content', classname='full'),
-    InlinePanel(RichTextPage, 'related_links', label='Related links'),
-    InlinePanel(RichTextPage, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 RichTextPage.promote_panels = [
@@ -99,7 +99,7 @@ class HomePageAttachment(Orderable, AbstractAttachment):
 HomePage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('content', classname='full'),
-    InlinePanel(HomePage, 'attachments', label='Attachments')
+    InlinePanel('attachments', label='Attachments')
 ]
 
 HomePage.promote_panels = [
@@ -281,8 +281,8 @@ class BlogIndexPageAttachment(Orderable, AbstractAttachment):
 BlogIndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(BlogIndexPage, 'related_links', label='Related links'),
-    InlinePanel(BlogIndexPage, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 BlogIndexPage.promote_panels = [
@@ -336,8 +336,8 @@ BlogPost.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('date'),
     FieldPanel('content', classname='full'),
-    InlinePanel(BlogPost, 'related_links', label='Related links'),
-    InlinePanel(BlogPost, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 BlogPost.promote_panels = [
