@@ -11,7 +11,8 @@
     <a href="{{ attachment.link }}">
       {% if attachment.embed_url %}
       {# Embedded video - requires an embedly key to be stored in settings #}
-      {{ attachment.embed_url|embed:1000 }}
+          {# |embed:1000 #}
+      {{ attachment.embed_url }}
       {% elif attachment.image %}
 
       {% image attachment.image width-1000 as attachmentimagedata %}
